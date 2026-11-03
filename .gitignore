@@ -1,0 +1,49 @@
+# Dependências
+node_modules/
+.pnp
+.pnp.*
+
+# Next.js / build
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# Banco de dados local (gerado pelo seed)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+data/
+
+# Variáveis de ambiente (somente o exemplo é versionado)
+.env*
+!.env.example
+
+# Testes
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+coverage/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Sistema operacional e editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Vercel
+.vercel
