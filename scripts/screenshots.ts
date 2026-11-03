@@ -47,7 +47,8 @@ async function main() {
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       )
-      if (overflow > 0) problems.push(`${name} (${viewport.name}): ${overflow}px de rolagem horizontal`)
+      if (overflow > 0)
+        problems.push(`${name} (${viewport.name}): ${overflow}px de rolagem horizontal`)
       await page.screenshot({ path: join(OUT, `${name}-${viewport.name}.png`), fullPage: true })
     }
     await context.close()
