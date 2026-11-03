@@ -29,6 +29,7 @@ export const FIELD_MESSAGES = {
   amount: 'Informe um valor maior que R$ 0,00.',
   statusFilter:
     'Filtro de estado inválido. Use draft, finalized, partially_invoiced, invoiced ou canceled.',
+  bugList: 'Envie {"active": [...]} com números de defeito entre 1 e 7.',
 } as const
 
 /** Como cada estado aparece no meio de uma frase ("o pedido está faturado"). */

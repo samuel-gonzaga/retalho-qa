@@ -1,14 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { resetBugOverrides } from '@/domain/bugs'
-import { api } from './helpers'
+import { api, type Json } from './helpers'
 
 afterEach(() => {
   vi.unstubAllEnvs()
   resetBugOverrides()
 })
 
-function activeIds(body: { bugs: { id: number; active: boolean }[] }) {
-  return body.bugs.filter((bug) => bug.active).map((bug) => bug.id)
+function activeIds(body: Json): number[] {
+  const bugs = body.bugs as { id: number; active: boolean }[]
+  return bugs.filter((bug) => bug.active).map((bug) => bug.id)
 }
 
 describe('RNF-01 · API da área de QA', () => {

@@ -14,7 +14,11 @@ export default defineConfig({
       },
       {
         extends: true,
-        test: { name: 'api', include: ['tests/api/**/*.test.ts'] },
+        test: {
+          name: 'api',
+          include: ['tests/api/**/*.test.ts'],
+          env: { RETALHO_DB_PATH: ':memory:' },
+        },
       },
     ],
   },
