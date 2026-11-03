@@ -119,6 +119,7 @@ body {
     content: attr(data-label);
     flex: none;
     color: var(--color-tinta-suave);
+    font-family: var(--font-sans);
     font-size: 0.875rem;
     text-align: left;
   }

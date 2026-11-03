@@ -32,7 +32,9 @@ export function NewOrderForm({ customers }: { customers: { id: number; name: str
       <SelectField
         id="customerId"
         label="Cliente"
-        hint="O pedido começa em rascunho, com desconto de 0 %, frete de R$ 0,00, Pix e 1 parcela."
+        hint={
+          'O pedido começa em rascunho, com desconto de 0 %, frete de R$ 0,00, Pix e 1 parcela.'
+        }
         error={error}
         value={customerId}
         onChange={(event) => setCustomerId(event.target.value)}

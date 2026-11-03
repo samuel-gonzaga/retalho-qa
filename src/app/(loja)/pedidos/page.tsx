@@ -117,7 +117,13 @@ export default async function OrdersPage({
                     {formatBRL(order.totalCents)}
                   </td>
                   <td data-label="Saldo" className="numero px-4 py-3 text-right">
-                    {formatBRL(order.balanceCents)}
+                    {order.status === 'draft' || order.status === 'canceled' ? (
+                      <span title="Sem saldo a faturar">
+                        —<span className="sr-only">sem saldo a faturar</span>
+                      </span>
+                    ) : (
+                      formatBRL(order.balanceCents)
+                    )}
                   </td>
                 </tr>
               ))}
