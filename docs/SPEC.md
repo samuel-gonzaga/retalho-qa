@@ -655,7 +655,8 @@ separador decimal, sem separador de milhar.
 A API recebe e devolve JSON. Rotas e chaves ficam em inglês (D-05). Todo erro tem o formato
 `{ "error": { "code": "...", "message": "...", "fields": { "campo": "mensagem" } } }`, em que
 `fields` aparece só em erros de validação. Um corpo que não é JSON válido devolve 400
-`INVALID_JSON`.
+`INVALID_JSON`. Um corpo vazio equivale a não enviar dados e cai na validação (422), para que,
+por exemplo, cancelar sem corpo devolva `REASON_REQUIRED`.
 
 **Aceite:** todas as respostas de erro dos endpoints da seção 10 seguem o formato. Enviar `abc`
 como corpo de um POST devolve 400 `INVALID_JSON`.
@@ -769,29 +770,31 @@ acrescenta: "Cancele as notas emitidas antes de cancelar o pedido."
 
 Os erros de validação (`VALIDATION_ERROR`) trazem em `fields` a mensagem de cada campo inválido.
 
-| Campo                 | Situação                                  | Mensagem                                                                    |
-| --------------------- | ----------------------------------------- | --------------------------------------------------------------------------- |
-| Produto · código      | Fora do formato                           | Use de 3 a 12 letras maiúsculas ou números, sem espaços.                    |
-| Produto · nome        | Vazio ou fora do tamanho                  | Informe o nome com 2 a 80 caracteres.                                       |
-| Produto · unidade     | Fora da lista                             | Escolha a unidade: metro, rolo ou unidade.                                  |
-| Produto · preço       | Fora da faixa                             | Informe um preço entre R$ 0,01 e R$ 99.999,99.                              |
-| Produto · comprimento | Rolo sem comprimento ou fora da faixa     | Informe o comprimento do rolo entre 0,01 e 500 m, com até 2 casas decimais. |
-| Produto · comprimento | Enviado para metro ou unidade             | O comprimento só se aplica a produtos vendidos em rolo.                     |
-| Cliente · tipo        | Fora da lista                             | Escolha pessoa física (PF) ou pessoa jurídica (PJ).                         |
-| Cliente · nome        | Vazio ou fora do tamanho                  | Informe o nome com 2 a 120 caracteres.                                      |
-| Cliente · documento   | CPF inválido (cliente PF)                 | CPF inválido. Confira os 11 dígitos.                                        |
-| Cliente · documento   | CNPJ inválido (cliente PJ)                | CNPJ inválido. Confira os 14 caracteres.                                    |
-| Cliente · CEP         | Fora do formato                           | CEP inválido. Use 8 dígitos, no formato 00000-000.                          |
-| Pedido · cliente      | Cliente inexistente                       | Escolha um cliente cadastrado.                                              |
-| Pedido · desconto     | Fora da faixa ou com mais de 2 casas      | Informe um desconto de 0 % a 100 %, com até 2 casas decimais.               |
-| Pedido · frete        | Fora da faixa                             | Informe um frete de R$ 0,00 a R$ 9.999,99.                                  |
-| Pedido · pagamento    | Fora da lista                             | Escolha Pix, boleto ou cartão.                                              |
-| Pedido · parcelas     | Fora da faixa ou fracionado               | Escolha de 1 a 3 parcelas.                                                  |
-| Item · produto        | Produto inexistente                       | Escolha um produto cadastrado.                                              |
-| Item · quantidade     | Fora da faixa                             | Informe uma quantidade entre 0,01 e 1.000.                                  |
-| Item · quantidade     | Metro com mais de 2 casas decimais        | Use no máximo 2 casas decimais.                                             |
-| Item · quantidade     | Rolo ou unidade com quantidade fracionada | Rolos e unidades são vendidos só em quantidades inteiras.                   |
-| Nota · valor          | Zero, negativo ou fracionado em centavos  | Informe um valor maior que R$ 0,00.                                         |
+| Campo                 | Situação                                    | Mensagem                                                                                   |
+| --------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Produto · código      | Fora do formato                             | Use de 3 a 12 letras maiúsculas ou números, sem espaços.                                   |
+| Produto · nome        | Vazio ou fora do tamanho                    | Informe o nome com 2 a 80 caracteres.                                                      |
+| Produto · unidade     | Fora da lista                               | Escolha a unidade: metro, rolo ou unidade.                                                 |
+| Produto · preço       | Fora da faixa                               | Informe um preço entre R$ 0,01 e R$ 99.999,99.                                             |
+| Produto · comprimento | Rolo sem comprimento ou fora da faixa       | Informe o comprimento do rolo entre 0,01 e 500 m, com até 2 casas decimais.                |
+| Produto · comprimento | Enviado para metro ou unidade               | O comprimento só se aplica a produtos vendidos em rolo.                                    |
+| Cliente · tipo        | Fora da lista                               | Escolha pessoa física (PF) ou pessoa jurídica (PJ).                                        |
+| Cliente · nome        | Vazio ou fora do tamanho                    | Informe o nome com 2 a 120 caracteres.                                                     |
+| Cliente · documento   | CPF inválido (cliente PF)                   | CPF inválido. Confira os 11 dígitos.                                                       |
+| Cliente · documento   | CNPJ inválido (cliente PJ)                  | CNPJ inválido. Confira os 14 caracteres.                                                   |
+| Cliente · CEP         | Fora do formato                             | CEP inválido. Use 8 dígitos, no formato 00000-000.                                         |
+| Pedido · cliente      | Cliente inexistente                         | Escolha um cliente cadastrado.                                                             |
+| Pedido · desconto     | Fora da faixa ou com mais de 2 casas        | Informe um desconto de 0 % a 100 %, com até 2 casas decimais.                              |
+| Pedido · frete        | Fora da faixa                               | Informe um frete de R$ 0,00 a R$ 9.999,99.                                                 |
+| Pedido · pagamento    | Fora da lista                               | Escolha Pix, boleto ou cartão.                                                             |
+| Pedido · parcelas     | Fora da faixa ou fracionado                 | Escolha de 1 a 3 parcelas.                                                                 |
+| Item · produto        | Produto inexistente                         | Escolha um produto cadastrado.                                                             |
+| Item · quantidade     | Fora da faixa                               | Informe uma quantidade entre 0,01 e 1.000.                                                 |
+| Item · quantidade     | Metro com mais de 2 casas decimais          | Use no máximo 2 casas decimais.                                                            |
+| Item · quantidade     | Rolo ou unidade com quantidade fracionada   | Rolos e unidades são vendidos só em quantidades inteiras.                                  |
+| Nota · valor          | Zero, negativo ou fracionado em centavos    | Informe um valor maior que R$ 0,00.                                                        |
+| Pedidos · filtro      | Estado fora da lista em `?status=`          | Filtro de estado inválido. Use draft, finalized, partially_invoiced, invoiced ou canceled. |
+| Área de QA · defeitos | Lista fora do formato ou com ID inexistente | Envie {"active": [...]} com números de defeito entre 1 e 7.                                |
 
 ## 12. Defeitos intencionais
 
