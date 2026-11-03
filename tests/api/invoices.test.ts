@@ -5,10 +5,10 @@ import {
   createOrder,
   issueInvoice,
   orderWithTotal,
-  useFreshDatabase,
+  withFreshDatabase,
 } from './helpers'
 
-useFreshDatabase()
+withFreshDatabase()
 
 describe('RF-32, RF-33 · emitir nota e saldo', () => {
   it('nota parcial, nota acima do saldo e nota total', async () => {

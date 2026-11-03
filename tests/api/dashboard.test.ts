@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { api, cancelInvoice, issueInvoice, orderWithTotal, useFreshDatabase } from './helpers'
+import { api, cancelInvoice, issueInvoice, orderWithTotal, withFreshDatabase } from './helpers'
 
-useFreshDatabase()
+withFreshDatabase()
 
 async function dashboard() {
   return (await api('GET', '/api/dashboard')).body

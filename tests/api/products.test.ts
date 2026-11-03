@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { addItem, api, createOrder, createProduct, useFreshDatabase } from './helpers'
+import { addItem, api, createOrder, createProduct, withFreshDatabase } from './helpers'
 
-useFreshDatabase()
+withFreshDatabase()
 
 const linho = { code: 'TEC1001', name: 'Linho Misto', unit: 'meter', priceCents: 4990 }
 

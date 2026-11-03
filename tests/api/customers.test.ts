@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { FIELD_MESSAGES as M } from '@/domain/messages'
-import { api, DOCS, useFreshDatabase } from './helpers'
+import { api, DOCS, withFreshDatabase } from './helpers'
 
-useFreshDatabase()
+withFreshDatabase()
 
 const pf = { type: 'PF', name: 'João Exemplo', document: DOCS.cpf1, cep: '12345678' }
 

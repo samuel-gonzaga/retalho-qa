@@ -85,7 +85,7 @@ export async function api(
   return { status: response.status, body: (await response.json()) as Json }
 }
 
-export function useFreshDatabase(): void {
+export function withFreshDatabase(): void {
   beforeEach(() => {
     resetDatabase()
   })

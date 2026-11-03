@@ -10,10 +10,10 @@ import {
   issueInvoice,
   OUTSIDE_CEP,
   orderWithTotal,
-  useFreshDatabase,
+  withFreshDatabase,
 } from './helpers'
 
-useFreshDatabase()
+withFreshDatabase()
 
 async function invoicedOrder() {
   const order = await orderWithTotal(30_000)
