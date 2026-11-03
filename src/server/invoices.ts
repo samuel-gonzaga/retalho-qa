@@ -73,6 +73,13 @@ function activeInvoices(orderId: number): number {
     .get(orderId) as number
 }
 
+/** RF-39: emitir e cancelar nota mudam o faturado, então o cache do painel é descartado. */
+function refreshDashboard(): void {
+  // BUG-6: as ações de nota deixam de invalidar o cache do painel.
+  if (isBugOn(6)) return
+  invalidateDashboard()
+}
+
 export type InvoiceResult = { invoice: Invoice; order: Order }
 
 /** RF-35: da mais recente para a mais antiga; o total soma só as emitidas. */
@@ -116,7 +123,7 @@ export function issueInvoice(orderId: number | null, body: unknown): InvoiceResu
     recordTransition(order.id, order.status, status)
     return Number(info.lastInsertRowid)
   })()
-  invalidateDashboard()
+  refreshDashboard()
   return { invoice: toInvoice(findInvoice(invoiceId)), order: getOrder(order.id) }
 }
 
@@ -147,6 +154,6 @@ export function cancelInvoice(invoiceId: number | null, body: unknown): InvoiceR
     )
     recordTransition(order.id, order.status, status, reason)
   })()
-  invalidateDashboard()
+  refreshDashboard()
   return { invoice: toInvoice(findInvoice(invoice.id)), order: getOrder(invoice.order_id) }
 }
