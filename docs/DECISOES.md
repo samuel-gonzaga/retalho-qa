@@ -250,3 +250,22 @@ motivo. Os IDs são estáveis; uma decisão revista ganha uma nova entrada que c
 - **Alternativas:** responder 400 também para corpo vazio.
 - **Motivo:** "cancelar sem motivo" é um caso de teste pedido explicitamente e deve devolver
   `REASON_REQUIRED`, com uma mensagem útil, mesmo quando o cliente da API não manda corpo.
+
+## Fase 3 · Direção de design e telas
+
+### D-29 · Geração do AGENTS.md desligada
+
+- **Decisão:** `agentRules: false` no `next.config.ts`, a opção que o próprio Next.js documenta
+  para não gerar o arquivo.
+- **Alternativas:** commitar o `AGENTS.md` que o `next dev` cria, ou só ignorá-lo no `.gitignore`.
+- **Motivo:** o arquivo é gerado por ferramenta e traz instruções para agentes de IA, não
+  conteúdo do projeto. Desligar a geração deixa a árvore limpa sem versionar algo gerado.
+
+### D-30 · Skill de design indisponível
+
+- **Decisão:** a skill `frontend-design` não existe neste ambiente (a ferramenta devolveu
+  "Unknown skill"). Foi aplicado o processo alternativo do plano: tokens e princípios em
+  `docs/DESIGN.md`, revisão contra a especificação, código e autocrítica com capturas.
+- **Alternativas:** seguir sem plano de design escrito.
+- **Motivo:** o plano registrado antes do código deixa as escolhas visuais revisáveis e
+  rastreáveis, como os requisitos.
