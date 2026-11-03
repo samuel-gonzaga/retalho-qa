@@ -1,5 +1,11 @@
 /**
- * Gera a massa de dados fictícia do Retalho com semente fixa.
- * A implementação completa (produtos, clientes, pedidos e notas) entra na Fase 2.
+ * `npm run seed`: recria a massa de dados fictícia no banco de RETALHO_DB_PATH (RNF-03).
  */
-console.log('Seed do Retalho: nada a gerar ainda (implementado na Fase 2).')
+import { databasePath } from './client'
+import { seedDatabase } from './seed-data'
+
+const summary = seedDatabase()
+console.log(
+  `Seed do Retalho em ${databasePath()}: ${summary.products} produtos, ` +
+    `${summary.customers} clientes, ${summary.orders} pedidos e ${summary.invoices} notas.`,
+)
