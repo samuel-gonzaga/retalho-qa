@@ -23,17 +23,20 @@ Requer Node.js 22 ou mais novo.
 
 ```bash
 npm install
+npm run seed
 npm run dev
 ```
 
-| Comando            | O que faz                                      |
-| ------------------ | ---------------------------------------------- |
-| `npm run dev`      | Sobe a aplicação em modo de desenvolvimento    |
-| `npm run lint`     | ESLint (zero avisos) e verificação do Prettier |
-| `npm test`         | Testes unitários (Vitest)                      |
-| `npm run test:api` | Testes de API (Vitest)                         |
-| `npm run test:e2e` | Testes E2E (Playwright)                        |
-| `npm run seed`     | Gera a massa de dados fictícia                 |
+| Comando                 | O que faz                                                      |
+| ----------------------- | -------------------------------------------------------------- |
+| `npm run dev`           | Sobe a aplicação em modo de desenvolvimento                    |
+| `npm run seed`          | Recria a massa fictícia (sempre a mesma) em `data/retalho.db`  |
+| `npm run lint`          | ESLint (zero avisos) e verificação do Prettier                 |
+| `npm test`              | Testes unitários (Vitest)                                      |
+| `npm run test:api`      | Testes de API (Vitest, banco em memória)                       |
+| `npm run test:defeitos` | Matriz de defeitos: roda as suítes com cada defeito ligado     |
+| `npm run test:e2e`      | Testes E2E (Playwright)                                        |
+| `npm run docs:check`    | Confere os IDs citados na documentação, no código e nos testes |
 
 ## Defeitos intencionais
 
@@ -44,5 +47,10 @@ RETALHO_BUGS=1,3,5 npm run dev
 ```
 
 Fora de produção, a página `/qa/defeitos` liga e desliga cada defeito em tempo de execução.
+
+Cada defeito vive em um único ponto do código, marcado com `// BUG-n` e ligado por `isBugOn(n)`.
+Os testes que o detectam levam `[BUG-0n]` no título. A matriz de defeitos
+(`npm run test:defeitos`) prova que cada teste falha com o seu defeito ligado e que nenhum outro
+teste falha.
 
 Todos os dados são fictícios e gerados por script.
