@@ -181,3 +181,72 @@ motivo. Os IDs são estáveis; uma decisão revista ganha uma nova entrada que c
 - **Alternativas:** defeitos que quebram a funcionalidade inteira.
 - **Motivo:** defeitos reais costumam ser parciais. Um defeito que quebra tudo seria achado por
   qualquer teste de fumaça e não exercitaria nenhuma técnica de projeto de testes.
+
+## Fase 2 · Domínio e API
+
+### D-22 · Camada de serviços em `src/server`
+
+- **Decisão:** além de `src/domain` (funções puras), `src/db` (esquema e conexão) e `src/app`
+  (rotas), há uma pasta `src/server` com os serviços que juntam domínio e banco. As rotas só leem
+  parâmetros e corpo e chamam um serviço.
+- **Alternativas:** colocar a lógica dentro das rotas ou dentro de `src/db`.
+- **Motivo:** as rotas ficam com poucas linhas, o domínio continua sem acesso a banco, e o seed
+  reaproveita os serviços sem passar por HTTP.
+
+### D-23 · Testes de API dentro do processo
+
+- **Decisão:** os testes de `tests/api` chamam os handlers das rotas do Next diretamente, com
+  objetos `Request` reais e um banco SQLite em memória novo a cada teste.
+- **Alternativas:** subir o servidor e fazer requisições HTTP.
+- **Motivo:** cobrem o mesmo contrato (status, corpo e formato de erro), rodam em segundos e não
+  dependem de porta nem de build. O caminho HTTP completo fica com os testes E2E da Fase 5.
+
+### D-24 · Totais do rascunho gravados no banco
+
+- **Decisão:** cada alteração de rascunho recalcula e grava subtotal, desconto, frete cobrado,
+  total e parcelas no pedido, e cada item grava o próprio preço unitário e total. A finalização
+  apenas congela o que está gravado e não recalcula.
+- **Alternativas:** calcular os totais na leitura.
+- **Motivo:** o pedido mostra exatamente o que foi calculado na última alteração, o que congela
+  os valores sem esforço extra (RF-24). Também é o que permite que um recálculo defeituoso
+  (BUG-1) persista até o próximo recálculo correto, como acontece em sistemas reais.
+
+### D-25 · Etiquetas de defeito nos testes e matriz por processo
+
+- **Decisão:** todo teste que detecta um defeito leva `[BUG-0n]` no título. O comando
+  `npm run test:defeitos` roda as suítes unitária e de API sem defeitos e depois com cada defeito
+  ligado (`RETALHO_BUGS=n`). Ele exige que algum teste etiquetado falhe e que nenhum teste sem
+  etiqueta falhe, e grava `test-results/bug-matrix.md`.
+- **Alternativas:** `describe.each` dentro de um único processo, invertendo a asserção quando o
+  defeito está ligado.
+- **Motivo:** com processos separados, o teste falha de verdade quando o defeito está ligado, em
+  vez de "passar porque falhou". A etiqueta torna a ligação teste → defeito verificável e
+  alimenta a matriz de rastreabilidade da Fase 4. Testes etiquetados que passam com o defeito
+  ligado são relatados como mascarados (o caso de 1 rolo do BUG-02).
+
+### D-26 · Seed limpa as tabelas em vez de apagar o arquivo
+
+- **Decisão:** `npm run seed` apaga as linhas de todas as tabelas e recria a massa no mesmo
+  arquivo, com semente, relógio e defeitos desligados fixos durante a geração.
+- **Alternativas:** apagar o arquivo `.db` e criar outro.
+- **Motivo:** no Windows, o arquivo fica travado enquanto o servidor de desenvolvimento está
+  aberto. Sem `AUTOINCREMENT`, os IDs recomeçam em 1 depois da limpeza, e a massa fica idêntica a
+  cada execução (RNF-03).
+
+### D-27 · Estado compartilhado em `globalThis`
+
+- **Decisão:** a conexão com o banco, os defeitos ligados em tempo de execução e o cache do painel
+  ficam em `globalThis`. O cache é guardado num `WeakMap` indexado pela conexão.
+- **Alternativas:** variáveis de módulo.
+- **Motivo:** o Next pode carregar o mesmo módulo em mais de um bundle do servidor. Com variáveis
+  de módulo, uma rota poderia invalidar um cache diferente do que a página lê, o que criaria um
+  defeito real fora do mecanismo `isBugOn`. O `WeakMap` faz cada banco novo dos testes começar sem
+  cache.
+
+### D-28 · Corpo vazio é tratado como ausência de dados
+
+- **Decisão:** um corpo vazio não é JSON inválido. Ele vale como "nada enviado" e cai na validação
+  (422), enquanto um corpo malformado devolve 400 (RNF-11).
+- **Alternativas:** responder 400 também para corpo vazio.
+- **Motivo:** "cancelar sem motivo" é um caso de teste pedido explicitamente e deve devolver
+  `REASON_REQUIRED`, com uma mensagem útil, mesmo quando o cliente da API não manda corpo.
