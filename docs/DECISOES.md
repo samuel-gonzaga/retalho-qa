@@ -269,3 +269,12 @@ motivo. Os IDs são estáveis; uma decisão revista ganha uma nova entrada que c
 - **Alternativas:** seguir sem plano de design escrito.
 - **Motivo:** o plano registrado antes do código deixa as escolhas visuais revisáveis e
   rastreáveis, como os requisitos.
+
+### D-31 · Capturas de tela geradas fora do versionamento
+
+- **Decisão:** `scripts/screenshots.ts` grava as capturas em `test-results/`, que é ignorado pelo
+  Git. Só as capturas escolhidas como evidência dos bug reports (Fase 4) e as do README (Fase 6)
+  serão copiadas para o repositório, de forma curada.
+- **Alternativas:** versionar todas as capturas a cada execução.
+- **Motivo:** capturas regeneradas a cada mudança são arquivos gerados e incham o histórico. As
+  que documentam algo são poucas e mudam pouco.
