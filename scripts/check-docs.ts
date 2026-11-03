@@ -8,7 +8,7 @@
  * - Quando a matriz de rastreabilidade existir, ela cita todos os requisitos.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { join, posix } from 'node:path'
 
 const ROOT = process.cwd()
 const SPEC = 'docs/SPEC.md'
@@ -30,7 +30,7 @@ function walk(dir: string): string[] {
   const absolute = join(ROOT, dir)
   if (!existsSync(absolute)) return []
   return readdirSync(absolute).flatMap((name) => {
-    const path = join(dir, name)
+    const path = posix.join(dir, name)
     if (statSync(join(ROOT, path)).isDirectory()) return walk(path)
     return SCANNED_EXTENSIONS.some((ext) => name.endsWith(ext)) ? [path] : []
   })
@@ -112,7 +112,7 @@ for (const file of files) {
         for (const match of line.matchAll(pattern)) {
           referenceCount++
           if (!known(match)) {
-            errors.push(`${relative(ROOT, join(ROOT, file))}:${index + 1}: ${match[0]} não existe`)
+            errors.push(`${file}:${index + 1}: ${match[0]} não existe`)
           }
         }
       }
