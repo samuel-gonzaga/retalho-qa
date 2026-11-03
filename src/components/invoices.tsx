@@ -28,10 +28,12 @@ export function IssueInvoiceForm({
   orderId,
   orderNumber,
   balanceCents,
+  compact = false,
 }: {
   orderId: number
   orderNumber: number
   balanceCents: number
+  compact?: boolean
 }) {
   const router = useRouter()
   const [amount, setAmount] = useState(centsToInput(balanceCents))
@@ -73,8 +75,16 @@ export function IssueInvoiceForm({
       <div className="flex items-start gap-3">
         <TextField
           id={fieldId}
-          label={`Valor da nota do pedido nº ${orderNumber} (R$)`}
-          hint="O saldo inteiro emite a nota total; um valor menor emite uma nota parcial."
+          label={
+            <>
+              Valor da nota <span className="sr-only">do pedido nº {orderNumber} </span>(R$)
+            </>
+          }
+          hint={
+            compact
+              ? undefined
+              : 'O saldo inteiro emite a nota total; um valor menor emite uma nota parcial.'
+          }
           error={error}
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
