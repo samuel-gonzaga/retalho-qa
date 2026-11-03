@@ -17,6 +17,7 @@
     "test": "vitest run --project unit",
     "test:api": "vitest run --project api",
     "test:e2e": "playwright test",
+    "test:defeitos": "tsx scripts/bug-matrix.ts",
     "seed": "tsx src/db/seed.ts",
     "docs:check": "tsx scripts/check-docs.ts"
   },
