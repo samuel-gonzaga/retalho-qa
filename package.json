@@ -17,7 +17,8 @@
     "test": "vitest run --project unit",
     "test:api": "vitest run --project api",
     "test:e2e": "playwright test",
-    "seed": "tsx src/db/seed.ts"
+    "seed": "tsx src/db/seed.ts",
+    "docs:check": "tsx scripts/check-docs.ts"
   },
   "dependencies": {
     "better-sqlite3": "13.0.3",
