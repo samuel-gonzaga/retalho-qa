@@ -2,6 +2,7 @@
  * Notas internas: emissão, cancelamento e lista (RF-32 a RF-35).
  */
 import { getDb } from '@/db/client'
+import { isBugOn } from '@/domain/bugs'
 import { ERROR_MESSAGES as E, FIELD_MESSAGES as M } from '@/domain/messages'
 import { statusAfterInvoiceChange } from '@/domain/order-state'
 import { amountOf, reasonOf, validateAmountCents, validateReason } from '@/domain/validation'
@@ -133,6 +134,8 @@ export function cancelInvoice(invoiceId: number | null, body: unknown): InvoiceR
     db.prepare(
       "UPDATE invoices SET status = 'canceled', canceled_at = ?, cancel_reason = ? WHERE id = ?",
     ).run(at, reason, invoice.id)
+    // BUG-5: o cancelamento para aqui e não devolve o saldo nem recalcula o estado do pedido.
+    if (isBugOn(5)) return
     const order = requireOrder(invoice.order_id)
     const balance = order.balance_cents + invoice.amount_cents
     const status = statusAfterInvoiceChange(balance, activeInvoices(order.id))
