@@ -7,6 +7,16 @@ de QA que os detecta.
 > Em construção. Documentação completa ao fim do projeto. Acompanhe em
 > [`docs/PROGRESSO.md`](docs/PROGRESSO.md).
 
+## Documentação
+
+- [`docs/SPEC.md`](docs/SPEC.md): especificação com 51 requisitos numerados (RF e RNF), máquina de
+  estados, contrato da API, mensagens de erro e os 7 defeitos intencionais.
+- [`docs/DECISOES.md`](docs/DECISOES.md): decisões tomadas, com alternativas e motivos.
+- [`docs/PENDENCIAS.md`](docs/PENDENCIAS.md): o que ainda está em aberto.
+
+`npm run docs:check` confere se os IDs são únicos, se cada requisito tem critério de aceite e se
+nenhum documento cita um ID inexistente.
+
 ## Como rodar
 
 Requer Node.js 22 ou mais novo.
