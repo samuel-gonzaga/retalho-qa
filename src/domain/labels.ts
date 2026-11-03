@@ -1,6 +1,7 @@
 /**
  * Rótulos da interface: vocabulário único (RNF-09) e botões sem atalhos reservados (RF-40).
  */
+import { isBugOn } from './bugs'
 import type { OrderStatus } from './order-state'
 import type { PaymentMethod } from './pricing'
 import type { Unit } from './units'
@@ -42,6 +43,8 @@ export type ButtonLabel = { text: string; ariaKeyShortcuts: string | undefined }
 
 /** RF-40: o botão que salva o pedido em rascunho. */
 export function saveButton(): ButtonLabel {
+  // BUG-7: o botão anuncia Ctrl+S, atalho que o navegador usa para "Salvar página".
+  if (isBugOn(7)) return { text: `${ACTION_LABELS.save} (Ctrl+S)`, ariaKeyShortcuts: 'Control+S' }
   return { text: ACTION_LABELS.save, ariaKeyShortcuts: undefined }
 }
 
