@@ -50,7 +50,7 @@ const MATRIX: Record<OrderStatus, Record<OrderAction, Expected>> = {
 const cases = Object.entries(MATRIX).flatMap(([status, actions]) =>
   Object.entries(actions).map(([action, expected]) => {
     const tag = status === 'invoiced' && action === 'save' ? '[BUG-03] ' : ''
-    return [`${tag}${status} + ${action}`, status, action, expected] as [
+    return [`${tag}${status} + ${action} → ${expected}`, status, action, expected] as [
       string,
       OrderStatus,
       OrderAction,
@@ -60,7 +60,7 @@ const cases = Object.entries(MATRIX).flatMap(([status, actions]) =>
 )
 
 describe('RF-25 a RF-29 · máquina de estados do pedido', () => {
-  it.each(cases)('%s → %s', (_, status, action, expected) => {
+  it.each(cases)('%s', (_, status, action, expected) => {
     const decision = decide(status, action)
     const outcome = decision.kind === 'reject' ? decision.code : decision.kind
     expect(outcome).toBe(expected)
