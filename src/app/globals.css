@@ -122,6 +122,12 @@ body {
     text-align: left;
   }
 
+  /* A célula principal (sem rótulo) abre o bloco, alinhada à esquerda. */
+  .tabela td[data-label=''] {
+    display: block;
+    text-align: left;
+  }
+
   .tabela td[data-label='']::before {
     content: none;
   }

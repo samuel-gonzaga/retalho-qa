@@ -18,14 +18,14 @@ function isActive(pathname: string, href: string): boolean {
 export function NavLinks() {
   const pathname = usePathname()
   return (
-    <nav aria-label="Principal" className="-mx-2">
-      <ul className="flex flex-wrap">
+    <nav aria-label="Principal" className="w-full sm:-mx-3 sm:w-auto">
+      <ul className="flex justify-between sm:justify-end">
         {LINKS.map((link) => (
           <li key={link.href}>
             <Link
               href={link.href}
               aria-current={isActive(pathname, link.href) ? 'page' : undefined}
-              className="pesponto block px-2 pt-2 pb-4 text-[15px] text-nav transition-colors duration-150 hover:text-white aria-[current=page]:text-white sm:px-3"
+              className="pesponto block px-0 pt-2 pb-4 text-sm text-nav transition-colors duration-150 hover:text-white aria-[current=page]:text-white sm:px-3 sm:text-[15px]"
             >
               {link.label}
             </Link>
