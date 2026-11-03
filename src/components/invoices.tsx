@@ -1,12 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { callApi } from './api-client'
 import { TextField } from './field'
 import { ReasonDialog } from './reason-dialog'
-import { buttonClass, Notice } from './ui'
+import { buttonClass } from './ui'
 import { centsToInput, formatDateTime, formatInvoiceNumber, parseMoneyInput } from '@/domain/format'
 import { ACTION_LABELS, INVOICE_STATUS_LABELS } from '@/domain/labels'
 import { formatBRL } from '@/domain/money'
@@ -36,6 +36,7 @@ export function IssueInvoiceForm({
   compact?: boolean
 }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [amount, setAmount] = useState(centsToInput(balanceCents))
   // Quando o saldo muda (outra nota emitida ou cancelada), o valor sugerido acompanha.
   const [suggestedFor, setSuggestedFor] = useState(balanceCents)
@@ -44,7 +45,6 @@ export function IssueInvoiceForm({
     setAmount(centsToInput(balanceCents))
   }
   const [error, setError] = useState<string>()
-  const [issued, setIssued] = useState<string>()
   const [pending, setPending] = useState(false)
   const fieldId = `valor-nota-${orderId}`
 
@@ -52,7 +52,6 @@ export function IssueInvoiceForm({
     event.preventDefault()
     setPending(true)
     setError(undefined)
-    setIssued(undefined)
     const result = await callApi<{ invoice: InvoiceView }>(
       'POST',
       `/api/orders/${orderId}/invoices`,
@@ -63,15 +62,12 @@ export function IssueInvoiceForm({
       setError(result.fields.amountCents ?? result.message)
       return
     }
-    setIssued(
-      `Nota ${formatInvoiceNumber(result.data.invoice.number)} emitida: ${formatBRL(result.data.invoice.amountCents)}.`,
-    )
-    router.refresh()
+    // A confirmação fica na página: numa nota total, este formulário some com o saldo zerado.
+    router.replace(`${pathname}?emitida=${result.data.invoice.id}`, { scroll: false })
   }
 
   return (
     <form onSubmit={submit} noValidate className="space-y-3">
-      {issued ? <Notice tone="success">{issued}</Notice> : null}
       <div className="flex items-start gap-3">
         <TextField
           id={fieldId}

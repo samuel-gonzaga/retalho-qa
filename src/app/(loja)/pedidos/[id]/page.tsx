@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { IssueInvoiceForm, InvoiceList } from '@/components/invoices'
+import { IssuedNotice } from '@/components/issued-notice'
 import { Notice, PageHeader, Section, StatusBadge, Summary } from '@/components/ui'
 import { formatDate, formatDateTime, formatPercent, formatProductPrice } from '@/domain/format'
 import { PAYMENT_LABELS, saveButton, STATUS_LABELS } from '@/domain/labels'
@@ -98,8 +99,15 @@ function History({ entries }: { entries: HistoryEntry[] }) {
   )
 }
 
-export default async function OrderPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function OrderPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ emitida?: string }>
+}) {
   const { id } = await params
+  const { emitida } = await searchParams
   const order = findOrNotFound(() => getOrder(/^\d+$/.test(id) ? Number(id) : null))
   const editable = order.status === 'draft'
   const invoices = listInvoices().invoices.filter((invoice) => invoice.orderId === order.id)
@@ -131,6 +139,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         actions={<OrderActions orderId={order.id} number={order.number} status={order.status} />}
       />
 
+      <IssuedNotice invoiceId={emitida} />
       {order.status === 'canceled' ? (
         <div className="mt-5">
           <Notice tone="info">Pedido cancelado. Motivo: {order.cancelReason}</Notice>

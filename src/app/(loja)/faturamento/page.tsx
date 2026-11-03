@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { IssueInvoiceForm, InvoiceList } from '@/components/invoices'
+import { IssuedNotice } from '@/components/issued-notice'
 import { EmptyState, PageHeader, Section, StatusBadge } from '@/components/ui'
 import { ACTION_LABELS } from '@/domain/labels'
 import { formatBRL } from '@/domain/money'
@@ -9,7 +10,12 @@ import { listOrders } from '@/server/orders'
 
 export const metadata: Metadata = { title: 'Faturamento' }
 
-export default function InvoicingPage() {
+export default async function InvoicingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ emitida?: string }>
+}) {
+  const { emitida } = await searchParams
   const { invoices, totalInvoicedCents } = listInvoices()
   const pending = [...listOrders('finalized'), ...listOrders('partially_invoiced')].sort(
     (a, b) => b.number - a.number,
@@ -29,6 +35,7 @@ export default function InvoicingPage() {
           </div>
         }
       />
+      <IssuedNotice invoiceId={emitida} />
 
       <Section
         title="Pedidos a faturar"
