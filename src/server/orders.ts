@@ -2,6 +2,7 @@
  * Pedidos: rascunho, itens, totais, finalização e cancelamento (RF-12 a RF-31).
  */
 import { getDb } from '@/db/client'
+import { isBugOn } from '@/domain/bugs'
 import type { Installment } from '@/domain/installments'
 import { ERROR_MESSAGES as E, FIELD_MESSAGES as M, type TransitionAction } from '@/domain/messages'
 import { fromHundredths } from '@/domain/numbers'
@@ -439,7 +440,8 @@ export function updateItem(id: number | null, itemId: number | null, body: unkno
       itemTotalCents(priced, quantityCenti),
       item.id,
     )
-    recalculate(order.id)
+    // BUG-1: o recálculo da edição de quantidade usa o subtotal como líquido e ignora o desconto.
+    recalculate(order.id, isBugOn(1) ? { discountBp: 0 } : {})
   })()
   return getOrder(order.id)
 }
