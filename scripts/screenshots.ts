@@ -8,7 +8,7 @@ import { chromium } from '@playwright/test'
 import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 
-const BASE = process.argv[2] ?? 'http://127.0.0.1:3200'
+const BASE = process.argv[2] ?? 'http://localhost:3200'
 const OUT = process.argv[3] ?? join('test-results', 'capturas')
 const ONLY = process.env.CAPTURAS?.split(',')
 

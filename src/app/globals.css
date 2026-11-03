@@ -40,6 +40,7 @@ body {
 
 .numero {
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 /* O elemento memorável: cabeçalho em sarja índigo com pesponto e ourela redline. */
