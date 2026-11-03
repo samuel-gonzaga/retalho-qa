@@ -792,3 +792,145 @@ Os erros de validação (`VALIDATION_ERROR`) trazem em `fields` a mensagem de ca
 | Item · quantidade     | Metro com mais de 2 casas decimais        | Use no máximo 2 casas decimais.                                             |
 | Item · quantidade     | Rolo ou unidade com quantidade fracionada | Rolos e unidades são vendidos só em quantidades inteiras.                   |
 | Nota · valor          | Zero, negativo ou fracionado em centavos  | Informe um valor maior que R$ 0,00.                                         |
+
+## 12. Defeitos intencionais
+
+O Retalho tem 7 defeitos plantados de propósito, para serem encontrados por técnicas de QA. Eles
+seguem estas regras:
+
+- Todos começam desligados e só são ligados por `isBugOn(n)` (RNF-01). Para ligar, use
+  `RETALHO_BUGS=n npm run dev` ou a página `/qa/defeitos`.
+- Cada defeito vive em um único ponto do código, marcado com `// BUG-n`. Com todos desligados, o
+  sistema segue esta especificação.
+- Nenhuma tela denuncia um defeito ligado (RNF-02). Quem testa encontra cada um por exploração.
+- Cada defeito tem um teste automatizado que falha com ele ligado e passa com ele desligado.
+
+| Defeito | Área                          | Viola        | Técnica que o encontra                                     |
+| ------- | ----------------------------- | ------------ | ---------------------------------------------------------- |
+| BUG-01  | Pedido · cálculo              | RF-17, RF-18 | Sequência de ações: editar depois de aplicar o desconto    |
+| BUG-02  | Pedido · conversão de unidade | RF-05, RF-16 | Partição e valor limite da quantidade (1 contra 2 ou mais) |
+| BUG-03  | Pedido · estados              | RF-26, RF-27 | Transição de estados: transição inválida                   |
+| BUG-04  | Pedido · parcelas             | RF-23        | Valor limite: divisão não exata                            |
+| BUG-05  | Faturamento · saldo           | RF-33, RF-34 | Transição de estados: caminho de volta                     |
+| BUG-06  | Painel · consistência         | RF-37, RF-39 | Oráculo de comparação entre telas                          |
+| BUG-07  | Interface · atalho            | RF-40        | Heurística de convenções da plataforma                     |
+
+### BUG-01 · Desconto global não é reaplicado após editar a quantidade
+
+- **Ponto de injeção:** o recálculo feito ao editar a quantidade de um item
+  (`PATCH /api/orders/{id}/items/{itemId}`).
+- **Correto:** a edição recalcula subtotal, desconto, frete cobrado, total e parcelas (RF-17).
+- **Com o defeito:** o recálculo dessa rota usa o subtotal como valor líquido e ignora o desconto.
+  Frete grátis e parcelas também passam a ser calculados sobre o valor sem desconto. Incluir item,
+  remover item e salvar o cabeçalho continuam corretos. Por isso, salvar o pedido de novo
+  "conserta" o total, o que esconde o defeito de quem não confere o valor logo após a edição.
+- **Cenário:** cliente com CEP na área local, Pix, desconto de 10 % e um item de 50 m a
+  R$ 50,00/m (total de R$ 2.250,00). Alterar a quantidade para 100 m. Esperado: R$ 4.500,00.
+  Obtido: R$ 5.000,00.
+- **Detecção automatizada:** depois de editar a quantidade, o total do pedido é igual a
+  subtotal − desconto + frete cobrado.
+
+### BUG-02 · Preço unitário do rolo dividido pela quantidade
+
+- **Ponto de injeção:** a conversão de unidade que calcula o preço unitário de um item vendido em
+  rolo.
+- **Correto:** o unitário é o preço do rolo (comprimento × preço por metro, RF-05), e o total é a
+  quantidade vezes o unitário (RF-16).
+- **Com o defeito:** a conversão trata o preço do rolo como se fosse o total da linha e o divide
+  pela quantidade para obter o unitário, arredondado ao centavo. O total da linha volta a ser
+  quantidade × unitário, o que dá o preço de um rolo só. Itens vendidos por metro ou por unidade
+  não são afetados.
+- **Cenário:** rolo de 5 m a R$ 4,00/m com quantidade 4. Esperado: unitário de R$ 20,00 e total de
+  R$ 80,00. Obtido: unitário de R$ 5,00 e total de R$ 20,00. Com quantidade 3, o arredondamento
+  ainda deixa rastro: unitário de R$ 6,67 (R$ 20,00 ÷ 3) e total de R$ 20,01.
+
+#### Por que a quantidade 1 esconde o defeito
+
+O defeito divide o preço do rolo pela quantidade. Dividir por 1 não muda o valor: com 1 rolo, o
+unitário com defeito é R$ 20,00 ÷ 1 = R$ 20,00, exatamente o valor correto, e o total também
+coincide. O erro só aparece a partir de 2 rolos.
+
+Testes de fumaça e demonstrações costumam usar quantidade 1, e por isso passam com o defeito
+ligado. A partição de equivalência da quantidade separa a classe "1 rolo", em que o defeito é
+invisível, da classe "2 ou mais rolos", em que ele aparece. A análise de valor limite exige testar
+as duas bordas, 1 e 2. Um conjunto de testes que cubra só uma das classes não encontra o defeito.
+
+- **Detecção automatizada:** para quantidades 1, 2 e 4 de um rolo, o unitário é igual ao preço
+  do rolo e o total é igual à quantidade vezes esse preço. Com o defeito ligado, o caso de
+  quantidade 1 continua passando e os de 2 e 4 falham, o que demonstra o mascaramento.
+
+### BUG-03 · API aceita alteração em pedido faturado
+
+- **Ponto de injeção:** a verificação de estado do PUT do cabeçalho do pedido
+  (`PUT /api/orders/{id}`).
+- **Correto:** só rascunho aceita o PUT. Os demais estados devolvem 409 `ORDER_NOT_EDITABLE` sem
+  gravar nada (RF-27).
+- **Com o defeito:** a lista de estados bloqueados para o PUT do cabeçalho não inclui Faturado.
+  Num pedido faturado, o PUT devolve 200, grava os campos e recalcula o total. O estado e as notas
+  continuam os mesmos, e o total deixa de bater com o que foi faturado. Os outros estados
+  continuam devolvendo 409, e as rotas de itens continuam protegidas.
+- **Cenário pela API:** enviar um PUT com desconto de 50 % para um pedido faturado. Esperado: 409
+  e total inalterado. Obtido: 200 e total alterado.
+- **Cenário pela tela:** abrir o mesmo pedido em rascunho em duas abas. Na primeira, finalizar o
+  pedido e emitir uma nota com o saldo inteiro. Na segunda, que ainda mostra o formulário de
+  rascunho, mudar o desconto e clicar em "Salvar". Esperado: aviso de que o pedido faturado não
+  aceita alterações. Obtido: a alteração é gravada.
+- **Detecção automatizada:** um PUT em pedido faturado devolve 409 e o total não muda.
+
+### BUG-04 · Última parcela não absorve a diferença de centavos
+
+- **Ponto de injeção:** o cálculo do plano de parcelas.
+- **Correto:** a última parcela é o total menos a soma das anteriores (RF-23).
+- **Com o defeito:** todas as parcelas recebem o valor truncado, e a diferença de centavos se
+  perde.
+- **Cenário:** R$ 100,00 em 3 parcelas. Esperado: R$ 33,33 + R$ 33,33 + R$ 33,34 (soma de
+  R$ 100,00). Obtido: três parcelas de R$ 33,33 (soma de R$ 99,99).
+- **Mascaramento:** totais divisíveis pelo número de parcelas não mostram o defeito, como
+  R$ 4.500,00 em 3 parcelas, qualquer valor em 1 parcela ou valores com centavos pares em 2.
+- **Detecção automatizada:** a soma das parcelas é igual ao total, para totais divisíveis e não
+  divisíveis.
+
+### BUG-05 · Cancelar a nota não devolve o saldo do pedido
+
+- **Ponto de injeção:** o cancelamento de nota (`POST /api/invoices/{id}/cancel`).
+- **Correto:** a nota passa a Cancelada, o valor volta ao saldo e o estado do pedido é recalculado
+  (RF-34).
+- **Com o defeito:** a nota passa a Cancelada, mas o saldo não volta e o estado do pedido não
+  muda. Um pedido faturado continua Faturado, com saldo de R$ 0,00, e por isso recusa uma nova
+  nota (RF-26).
+- **Cenário:** pedido de R$ 300,00 faturado com notas de R$ 100,00 e R$ 200,00. Cancelar a nota de
+  R$ 200,00. Esperado: Parcialmente faturado, com saldo de R$ 200,00. Obtido: Faturado, com saldo
+  de R$ 0,00.
+- **Efeito visível no painel:** a igualdade vendido = faturado + a faturar (RF-38) deixa de valer.
+  O faturado cai R$ 200,00 e o a faturar não sobe.
+- **Detecção automatizada:** depois de cancelar a nota, o estado e o saldo do pedido são os de
+  RF-34.
+
+### BUG-06 · Painel mostra faturado diferente da lista de notas
+
+- **Ponto de injeção:** a invalidação do cache do painel depois de emitir ou cancelar uma nota.
+- **Correto:** toda ação que muda os números invalida o cache do painel (RF-39).
+- **Com o defeito:** emitir e cancelar nota deixam de invalidar o cache. Finalizar e cancelar
+  pedido continuam invalidando, por isso o painel "se corrige sozinho" depois de outra
+  finalização, o que dificulta reproduzir o defeito.
+- **Cenário:** abrir o painel e anotar o faturado. Emitir uma nota de R$ 100,00. A lista de notas
+  mostra o total faturado R$ 100,00 maior; o painel continua com o valor antigo. Esperado: os dois
+  valores iguais.
+- **Mascaramento:** o cache só existe depois que o painel é aberto. Quem abre o painel pela
+  primeira vez depois da emissão vê o valor certo. Reiniciar o servidor também limpa o cache.
+- **Detecção automatizada:** ler o painel, emitir uma nota e comparar o faturado do painel com o
+  total da lista de notas.
+
+### BUG-07 · Botão "Salvar" anuncia o atalho Ctrl+S
+
+- **Ponto de injeção:** o rótulo do botão que salva o pedido em rascunho.
+- **Correto:** o botão se chama "Salvar" e não anuncia atalho (RF-40).
+- **Com o defeito:** o botão mostra "Salvar (Ctrl+S)" e declara `aria-keyshortcuts="Control+S"`,
+  mas o sistema não trata o atalho. Pressionar Ctrl+S abre o "Salvar página" do navegador, e o
+  pedido não é salvo. Mesmo que o sistema tratasse o atalho, ele disputaria a combinação com o
+  navegador.
+- **Cenário:** abrir um pedido em rascunho, alterar o desconto e pressionar Ctrl+S, como o botão
+  sugere. Esperado: nenhum atalho anunciado. Obtido: abre o diálogo do navegador, e a alteração não
+  é salva.
+- **Detecção automatizada:** o nome acessível do botão é exatamente "Salvar", sem
+  `aria-keyshortcuts`.
