@@ -11,6 +11,8 @@ de QA que os detecta.
 
 - [`docs/SPEC.md`](docs/SPEC.md): especificação com 51 requisitos numerados (RF e RNF), máquina de
   estados, contrato da API, mensagens de erro e os 7 defeitos intencionais.
+- [`docs/DESIGN.md`](docs/DESIGN.md): direção de design, tokens, revisão contra a especificação e
+  autocrítica sobre as capturas de tela.
 - [`docs/DECISOES.md`](docs/DECISOES.md): decisões tomadas, com alternativas e motivos.
 - [`docs/PENDENCIAS.md`](docs/PENDENCIAS.md): o que ainda está em aberto.
 
@@ -26,6 +28,16 @@ npm install
 npm run seed
 npm run dev
 ```
+
+Abra `http://localhost:3000`. O `next dev` bloqueia o acesso por `127.0.0.1`; use `localhost`.
+
+| Tela        | Endereço       | O que faz                                              |
+| ----------- | -------------- | ------------------------------------------------------ |
+| Painel      | `/`            | Vendido, faturado e a faturar                          |
+| Pedidos     | `/pedidos`     | Itens, desconto, frete, parcelas, finalizar e cancelar |
+| Faturamento | `/faturamento` | Notas totais ou parciais, saldo e cancelamento de nota |
+| Produtos    | `/produtos`    | Tecido por metro, rolos e aviamentos: busca e cadastro |
+| Clientes    | `/clientes`    | PF e PJ, com CPF, CNPJ (inclusive alfanumérico) e CEP  |
 
 | Comando                 | O que faz                                                      |
 | ----------------------- | -------------------------------------------------------------- |
