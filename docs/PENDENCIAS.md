@@ -5,9 +5,10 @@ impacto, o que falta e a situação atual.
 
 ## Abertas
 
-| ID   | Fase | Pendência                                                   | Impacto               | Ação sugerida                                            |
-| ---- | ---- | ----------------------------------------------------------- | --------------------- | -------------------------------------------------------- |
-| P-02 | 0    | `npm run seed` ainda não gera dados: só exibe uma mensagem. | Nenhum, até a Fase 2. | Implementar a massa fictícia com semente fixa na Fase 2. |
+| ID   | Fase | Pendência                                                                                   | Impacto                        | Ação sugerida                                            |
+| ---- | ---- | ------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------- |
+| P-02 | 0    | `npm run seed` ainda não gera dados: só exibe uma mensagem.                                 | Nenhum, até a Fase 2.          | Implementar a massa fictícia com semente fixa na Fase 2. |
+| P-03 | 1    | `PUT /api/qa/bugs` devolve 422 para corpo que não é JSON; a RNF-11 pede 400 `INVALID_JSON`. | Só a área de QA, até a Fase 2. | Usar o tratamento de erro comum da API na Fase 2.        |
 
 ## Resolvidas
 
