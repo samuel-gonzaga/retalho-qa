@@ -181,4 +181,39 @@ requisição nas ferramentas do navegador e pode repeti-la, o caminho mais curto
 
 ## 9. Autocrítica
 
-Preenchida depois das capturas de tela de desktop e celular.
+Feita sobre 20 capturas (10 telas, em 1280 px e 360 px) do build de produção, com
+`scripts/screenshots.ts`, e sobre a reprodução de cada defeito pela interface.
+
+### 9.1 O que funcionou
+
+- O cabeçalho-ourela é reconhecível e fica restrito ao topo; o conteúdo continua sóbrio.
+- Os números grandes do painel, condensados (largura 75), lembram etiqueta de preço sem enfeite.
+- Nenhuma das 10 telas tem rolagem horizontal em 360 px (conferido pelo script).
+- Os 7 defeitos foram reproduzidos só pela interface, com os valores da especificação, e nenhuma
+  tela fala de defeito (RNF-02). As capturas ficaram como evidência para os bug reports.
+
+### 9.2 O que as capturas mostraram e foi corrigido
+
+| Problema                                                    | Correção                                                      |
+| ----------------------------------------------------------- | ------------------------------------------------------------- |
+| Navegação quebrava em duas linhas no celular                | Itens distribuídos na largura toda, sem espaçamento lateral   |
+| Produto virava quatro linhas de rótulo e valor no celular   | Nome e código viram a linha principal do bloco                |
+| Valores em reais quebravam entre "R$" e o número            | Números nunca quebram linha (`.numero`)                       |
+| No celular, os totais do pedido ficavam depois do histórico | A grade foi reordenada: itens, condições, totais, faturamento |
+| A mesma dica longa se repetia em cada pedido a faturar      | Rótulo curto visível, número do pedido só no nome acessível   |
+| "0 %" e "R$ 300,00" quebravam no meio                       | Espaços inseparáveis                                          |
+| Rótulos dos blocos herdavam a fonte mono dos documentos     | Rótulos sempre na fonte da interface                          |
+| Rascunhos e cancelados mostravam "Saldo R$ 0,00"            | Mostram "—", com texto para leitor de tela                    |
+| Na nota total, a confirmação sumia junto com o formulário   | A confirmação passou para a página (`?emitida=`)              |
+
+### 9.3 Limitações conhecidas
+
+- Abaixo de 640 px, as tabelas usam `display: block`; alguns leitores de tela deixam de anunciá-las
+  como tabela. Os rótulos de cada valor continuam visíveis e lidos.
+- A trama da sarja é sutil de propósito e pode quase sumir em telas de pouco contraste.
+- O seletor de produto lista o catálogo inteiro: serve para a massa de 18 produtos, mas pediria
+  busca num catálogo grande.
+- Os formulários não validam no navegador: todo erro vem da API, de propósito, para que a validação
+  do servidor seja exercitada pela tela. O custo é uma ida ao servidor a cada erro.
+- O fluxo completo só com teclado (RNF-05) foi percorrido nos componentes, mas ainda não tem teste
+  automatizado; ele entra nos testes E2E da Fase 5.
