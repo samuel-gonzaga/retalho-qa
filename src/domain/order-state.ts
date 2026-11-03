@@ -1,6 +1,7 @@
 /**
  * Máquina de estados do pedido (RF-25 a RF-29, RF-33, RF-34).
  */
+import { isBugOn } from './bugs'
 
 export const ORDER_STATUSES = [
   'draft',
@@ -39,7 +40,13 @@ export function isOrderStatus(value: unknown): value is OrderStatus {
 /** Decide se a ação é permitida, se é uma repetição sem efeito ou se deve ser recusada. */
 export function decide(status: OrderStatus, action: OrderAction): Decision {
   switch (action) {
-    case 'save':
+    case 'save': {
+      // BUG-3: a lista de estados bloqueados do PUT do cabeçalho esquece o Faturado.
+      const locked = isBugOn(3)
+        ? LOCKED_STATUSES.filter((locked) => locked !== 'invoiced')
+        : LOCKED_STATUSES
+      return locked.includes(status) ? reject('ORDER_NOT_EDITABLE') : ALLOW
+    }
     case 'editItems':
       return LOCKED_STATUSES.includes(status) ? reject('ORDER_NOT_EDITABLE') : ALLOW
     case 'finalize':
