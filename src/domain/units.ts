@@ -1,6 +1,7 @@
 /**
  * Unidades de venda, regras de quantidade e conversão para preço unitário (RF-05, RF-15, RF-16).
  */
+import { isBugOn } from './bugs'
 import { divRoundHalfUp } from './money'
 import { decimalPlaces, toHundredths } from './numbers'
 
@@ -47,13 +48,18 @@ export function rollPriceCents(lengthCenti: number, pricePerMeterCents: number):
 }
 
 /** RF-16: preço de uma unidade de venda (1 m, 1 rolo ou 1 unidade). */
-export function unitPriceCents(product: PricedProduct, _quantityCenti: number): number {
+export function unitPriceCents(product: PricedProduct, quantityCenti: number): number {
   switch (product.unit) {
     case 'meter':
     case 'unit':
       return product.priceCents
-    case 'roll':
-      return rollPriceCents(product.rollLengthCenti ?? 0, product.priceCents)
+    case 'roll': {
+      const rollPrice = rollPriceCents(product.rollLengthCenti ?? 0, product.priceCents)
+      // BUG-2: trata o preço do rolo como total da linha e o divide pela quantidade de rolos.
+      // Com 1 rolo, dividir por 1 não muda o valor, e o defeito fica escondido.
+      if (isBugOn(2)) return divRoundHalfUp(rollPrice * 100, quantityCenti)
+      return rollPrice
+    }
   }
 }
 
