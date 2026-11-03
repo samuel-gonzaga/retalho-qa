@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { buttonClass, PageHeader } from '@/components/ui'
 import { isQaPanelEnabled, listBugs, type BugSource } from '@/domain/bugs'
 import { restoreEnvBugs, toggleBug, turnOffAllBugs } from './actions'
-
-export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Defeitos intencionais',
@@ -23,29 +22,34 @@ export default function DefeitosPage() {
   const envValue = process.env.RETALHO_BUGS?.trim()
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
-      <p className="text-sm text-stone-600">Área de QA</p>
-      <h1 className="mt-1 text-2xl font-semibold">Defeitos intencionais</h1>
-      <p className="mt-3 text-stone-700">
-        Ligue um defeito por vez para reproduzir os cenários dos bug reports. Com todos desligados o
-        sistema segue a especificação. Valor de <code>RETALHO_BUGS</code> ao iniciar:{' '}
-        <code>{envValue ? envValue : 'vazio'}</code>.
-      </p>
+    <>
+      <PageHeader
+        eyebrow="Área de QA"
+        title="Defeitos intencionais"
+        description={
+          <>
+            Ligue um defeito por vez para reproduzir os cenários dos bug reports. Com todos
+            desligados, o sistema segue a especificação. As mudanças valem até o servidor reiniciar.
+            Valor de <code className="font-mono">RETALHO_BUGS</code> ao iniciar:{' '}
+            <code className="font-mono">{envValue ? envValue : 'vazio'}</code>.
+          </>
+        }
+      />
 
-      <ul className="mt-8 divide-y divide-stone-200 border-y border-stone-200">
+      <ul className="mt-6 divide-y divide-fio border-y border-fio bg-papel">
         {bugs.map((bug) => (
-          <li key={bug.id} className="flex flex-wrap items-start gap-4 py-4">
+          <li key={bug.id} className="flex items-start gap-4 px-4 py-4">
             <div className="min-w-0 flex-1">
               <h2 className="font-medium" id={`defeito-${bug.id}`}>
-                Defeito {bug.id} <span className="text-stone-600">· {bug.area}</span>
+                Defeito {bug.id} <span className="text-tinta-suave">· {bug.area}</span>
               </h2>
-              <p className="text-sm text-stone-600">
+              <p className="text-sm text-tinta-suave">
                 {bug.active ? 'Ligado' : 'Desligado'} ({SOURCE_LABEL[bug.source]})
               </p>
               <details className="mt-2 text-sm">
-                <summary className="cursor-pointer text-stone-700">Ver o que muda</summary>
+                <summary className="cursor-pointer text-anil">Ver o que muda</summary>
                 <p className="mt-2 font-medium">{bug.title}</p>
-                <p className="mt-1 text-stone-700">{bug.summary}</p>
+                <p className="mt-1 text-tinta-suave">{bug.summary}</p>
               </details>
             </div>
             <form action={toggleBug}>
@@ -56,9 +60,9 @@ export default function DefeitosPage() {
                 role="switch"
                 aria-checked={bug.active}
                 aria-labelledby={`defeito-${bug.id}`}
-                className="inline-flex h-8 w-14 items-center rounded-full border border-stone-400 bg-stone-100 px-1 aria-checked:border-stone-900 aria-checked:bg-stone-900"
+                className="group inline-flex h-11 w-16 items-center rounded-[2px] border border-borda bg-fundo px-1 transition-colors duration-150 aria-checked:border-carmim aria-checked:bg-carmim"
               >
-                <span className="size-6 rounded-full bg-white shadow transition-transform [[aria-checked=true]>&]:translate-x-6" />
+                <span className="size-8 rounded-[2px] border border-borda bg-papel transition-transform duration-150 group-aria-checked:translate-x-6 group-aria-checked:border-carmim" />
               </button>
             </form>
           </li>
@@ -67,16 +71,16 @@ export default function DefeitosPage() {
 
       <div className="mt-6 flex flex-wrap gap-3">
         <form action={turnOffAllBugs}>
-          <button type="submit" className="rounded border border-stone-400 px-3 py-2 text-sm">
+          <button type="submit" className={buttonClass('secondary')}>
             Desligar todos
           </button>
         </form>
         <form action={restoreEnvBugs}>
-          <button type="submit" className="rounded border border-stone-400 px-3 py-2 text-sm">
+          <button type="submit" className={buttonClass('secondary')}>
             Restaurar RETALHO_BUGS
           </button>
         </form>
       </div>
-    </main>
+    </>
   )
 }
