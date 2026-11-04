@@ -1,22 +1,22 @@
 # Relatório de execução
 
-Gerado por `npm run qa:relatorio` em 04/11/2026, 12:03 (horário de Brasília), sobre o commit
-`7f02409`, com Node.js v24.21.0 em win32 10.0.19045. Todos os
+Gerado por `npm run qa:relatorio` em 04/11/2026, 12:28 (horário de Brasília), sobre o commit
+`8d9e18e`, com Node.js v24.21.0 em win32 10.0.19045. Todos os
 números abaixo vêm desta execução. Não edite à mão.
 
 ## 1. Resumo
 
-| Suíte            | Arquivos | Testes                     | Passaram | Falharam | Duração |
-| ---------------- | -------- | -------------------------- | -------- | -------- | ------- |
-| Unitária         | 10       | 266                        | 266      | 0        | 0,1 s   |
-| API              | 7        | 64                         | 64       | 0        | 1,0 s   |
-| E2E (Playwright) | —        | não executada nesta versão | —        | —        | —       |
+| Suíte            | Arquivos | Testes | Passaram | Falharam | Duração |
+| ---------------- | -------- | ------ | -------- | -------- | ------- |
+| Unitária         | 10       | 266    | 266      | 0        | 0,1 s   |
+| API              | 8        | 80     | 80       | 0        | 1,1 s   |
+| E2E (Playwright) | —        | 21     | 21       | 0        | —       |
 
 Com todos os defeitos desligados, todos os testes passaram.
 
 ## 2. Matriz de defeitos
 
-Sem defeitos ligados: 330 de 330 testes passaram.
+Sem defeitos ligados: 346 de 346 testes passaram.
 Com cada defeito ligado (`RETALHO_BUGS=n`), as falhas abaixo são as **esperadas**: só testes
 etiquetados com o defeito podem falhar.
 
@@ -71,6 +71,20 @@ etiquetados com o defeito podem falhar.
 
 - falhou: RF-40 · botões sem atalhos que conflitam com o navegador [BUG-07] o botão de salvar o pedido se chama "Salvar" e não anuncia atalho
 
+### 2.2 Matriz de defeitos dos E2E
+
+A suíte E2E inteira roda uma vez com cada defeito ligado (`npm run test:e2e:defeitos`).
+
+| Defeito | Testes etiquetados | Falharam (detecção) | Falhas sem etiqueta | Resultado |
+| ------- | ------------------ | ------------------- | ------------------- | --------- |
+| BUG-01  | 1                  | 1                   | 0                   | detectado |
+| BUG-02  | 1                  | 1                   | 0                   | detectado |
+| BUG-03  | 1                  | 1                   | 0                   | detectado |
+| BUG-04  | 1                  | 1                   | 0                   | detectado |
+| BUG-05  | 1                  | 1                   | 0                   | detectado |
+| BUG-06  | 1                  | 1                   | 0                   | detectado |
+| BUG-07  | 1                  | 1                   | 0                   | detectado |
+
 ## 3. Cobertura de código
 
 Medida pelo provedor V8 do Vitest nas suítes unitária e de API. As telas (`src/app`, exceto
@@ -78,11 +92,11 @@ as rotas de API) e os componentes são cobertos pelos testes E2E, que não entra
 
 | Pasta         | Arquivos | Linhas  | Comandos | Ramos  | Funções |
 | ------------- | -------- | ------- | -------- | ------ | ------- |
-| `src/domain`  | 13       | 97,1 %  | 96,6 %   | 92,9 % | 97,8 %  |
-| `src/server`  | 9        | 97,7 %  | 95,5 %   | 83,8 % | 97,5 %  |
+| `src/domain`  | 13       | 97,1 %  | 96,6 %   | 93,7 % | 97,8 %  |
+| `src/server`  | 9        | 97,7 %  | 95,9 %   | 86,3 % | 97,5 %  |
 | `src/db`      | 4        | 100,0 % | 99,1 %   | 96,2 % | 95,7 %  |
 | `src/app/api` | 15       | 100,0 % | 100,0 %  | 90,0 % | 100,0 % |
-| **Total**     | 41       | 98,0 %  | 96,9 %   | 90,4 % | 97,7 %  |
+| **Total**     | 41       | 98,0 %  | 97,0 %   | 91,6 % | 97,7 %  |
 
 ## 4. Cobertura de requisitos
 
@@ -91,12 +105,13 @@ Da matriz de rastreabilidade (`qa/04-matriz-de-rastreabilidade.md`):
 | Medida                                          | Valor      |
 | ----------------------------------------------- | ---------- |
 | Requisitos com caso de teste                    | 51 (100 %) |
-| Requisitos com teste automatizado que cita o ID | 45 (88 %)  |
+| Requisitos com teste automatizado que cita o ID | 49 (96 %)  |
 
 ## 5. Testes por arquivo
 
 | Arquivo                           | Testes | Falharam |
 | --------------------------------- | ------ | -------- |
+| `tests/api/contract.test.ts`      | 16     | 0        |
 | `tests/api/customers.test.ts`     | 9      | 0        |
 | `tests/api/dashboard.test.ts`     | 4      | 0        |
 | `tests/api/invoices.test.ts`      | 8      | 0        |
@@ -117,9 +132,9 @@ Da matriz de rastreabilidade (`qa/04-matriz-de-rastreabilidade.md`):
 
 ## 6. Critérios de saída do plano de teste
 
-| Critério                                                    | Situação                           |
-| ----------------------------------------------------------- | ---------------------------------- |
-| Testes unitários e de API passam com os defeitos desligados | atendido                           |
-| Testes E2E passam com os defeitos desligados                | pendente: E2E ainda não executados |
-| Os 7 defeitos detectados, sem falha fora das etiquetas      | atendido                           |
-| 100 % dos requisitos com caso de teste                      | atendido                           |
+| Critério                                                    | Situação |
+| ----------------------------------------------------------- | -------- |
+| Testes unitários e de API passam com os defeitos desligados | atendido |
+| Testes E2E passam com os defeitos desligados                | atendido |
+| Os 7 defeitos detectados, sem falha fora das etiquetas      | atendido |
+| 100 % dos requisitos com caso de teste                      | atendido |
