@@ -1,0 +1,129 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+  # Somente valores de teste: a área de QA liberada no build de produção usado pelos E2E.
+  RETALHO_QA_PAINEL: '1'
+
+jobs:
+  qualidade:
+    name: Lint, tipos e documentação
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run docs:check
+
+  unitarios:
+    name: Testes unitários
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  api:
+    name: Testes de API
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:api
+
+  defeitos:
+    name: Matriz de defeitos (unitários e API)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:defeitos
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: matriz-de-defeitos
+          path: test-results/bug-matrix.md
+          if-no-files-found: ignore
+
+  e2e:
+    name: Testes E2E (Playwright)
+    runs-on: ubuntu-latest
+    env:
+      E2E_SKIP_BUILD: '1'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: relatorio-playwright
+          path: playwright-report
+          retention-days: 14
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: resultado-e2e
+          path: test-results/e2e.json
+          if-no-files-found: ignore
+
+  e2e-defeitos:
+    name: Matriz de defeitos E2E · BUG-0${{ matrix.bug }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        bug: [1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run test:e2e:defeitos -- ${{ matrix.bug }}
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: e2e-defeito-${{ matrix.bug }}
+          path: |
+            test-results/e2e-defeito-${{ matrix.bug }}.json
+            test-results/playwright-report-defeito-${{ matrix.bug }}
+          if-no-files-found: ignore
