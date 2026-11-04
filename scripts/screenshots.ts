@@ -3,6 +3,7 @@
  * da Fase 3. Também confere a rolagem horizontal em 360 px (RNF-06).
  *
  * Uso: com o servidor rodando, `npx tsx scripts/screenshots.ts [url-base] [pasta]`.
+ * `CAPTURAS=painel,produtos` limita as telas; `CAPTURAS_RECORTE=1` captura só a altura da tela.
  */
 import { chromium } from '@playwright/test'
 import { mkdirSync } from 'node:fs'
@@ -11,6 +12,7 @@ import { join } from 'node:path'
 const BASE = process.argv[2] ?? 'http://localhost:3200'
 const OUT = process.argv[3] ?? join('test-results', 'capturas')
 const ONLY = process.env.CAPTURAS?.split(',')
+const FULL_PAGE = process.env.CAPTURAS_RECORTE !== '1'
 
 const PAGES: [string, string][] = [
   ['painel', '/'],
@@ -49,7 +51,10 @@ async function main() {
       )
       if (overflow > 0)
         problems.push(`${name} (${viewport.name}): ${overflow}px de rolagem horizontal`)
-      await page.screenshot({ path: join(OUT, `${name}-${viewport.name}.png`), fullPage: true })
+      await page.screenshot({
+        path: join(OUT, `${name}-${viewport.name}.png`),
+        fullPage: FULL_PAGE,
+      })
     }
     await context.close()
   }
