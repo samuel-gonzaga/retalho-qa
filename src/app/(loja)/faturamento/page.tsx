@@ -31,10 +31,7 @@ export default async function InvoicingPage({
             <dt id="total-faturado" className="text-sm text-tinta-suave">
               Total faturado
             </dt>
-            <dd
-              aria-labelledby="total-faturado"
-              className="numero text-[28px] leading-tight font-bold [font-stretch:75%]"
-            >
+            <dd className="numero text-[28px] leading-tight font-bold [font-stretch:75%]">
               {formatBRL(totalInvoicedCents)}
             </dd>
           </dl>
@@ -75,15 +72,11 @@ export default async function InvoicingPage({
                     <dt id={`pedido-${order.id}-total`} className="text-tinta-suave">
                       Total
                     </dt>
-                    <dd aria-labelledby={`pedido-${order.id}-total`}>
-                      {formatBRL(order.totalCents)}
-                    </dd>
+                    <dd>{formatBRL(order.totalCents)}</dd>
                     <dt id={`pedido-${order.id}-saldo`} className="text-tinta-suave">
                       Saldo
                     </dt>
-                    <dd aria-labelledby={`pedido-${order.id}-saldo`} className="font-semibold">
-                      {formatBRL(order.balanceCents)}
-                    </dd>
+                    <dd className="font-semibold">{formatBRL(order.balanceCents)}</dd>
                   </dl>
                 </div>
                 <IssueInvoiceForm

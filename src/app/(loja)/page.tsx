@@ -21,10 +21,7 @@ function Figure({
       <dt id={id} className="font-medium">
         {label}
       </dt>
-      <dd
-        aria-labelledby={id}
-        className="numero mt-1 text-[40px] leading-[44px] font-bold [font-stretch:75%]"
-      >
+      <dd className="numero mt-1 text-[40px] leading-[44px] font-bold [font-stretch:75%]">
         {formatBRL(cents)}
       </dd>
       <dd className="mt-1 text-sm text-tinta-suave">{note}</dd>

@@ -143,10 +143,7 @@ export function Notice({
   )
 }
 
-/**
- * Lista de termos e valores, com números alinhados à direita. Cada valor (dd) leva o nome do
- * seu termo (dt), para leitores de tela e para testes que localizam por papel e nome.
- */
+/** Lista de termos e valores, com números alinhados à direita. */
 export function Summary({
   id,
   rows,
@@ -164,9 +161,7 @@ export function Summary({
           <dt id={`${id}-${index}`} className={row.strong ? '' : 'text-tinta-suave'}>
             {row.term}
           </dt>
-          <dd aria-labelledby={`${id}-${index}`} className="numero text-right">
-            {row.value}
-          </dd>
+          <dd className="numero text-right">{row.value}</dd>
         </div>
       ))}
     </dl>
