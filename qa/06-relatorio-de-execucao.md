@@ -1,7 +1,7 @@
 # Relatório de execução
 
-Gerado por `npm run qa:relatorio` em 04/11/2026, 12:28 (horário de Brasília), sobre o commit
-`8d9e18e`, com Node.js v24.21.0 em win32 10.0.19045. Todos os
+Gerado por `npm run qa:relatorio` em 04/11/2026, 12:45 (horário de Brasília), sobre o commit
+`1129fee`, com Node.js v24.21.0 em win32 10.0.19045. Todos os
 números abaixo vêm desta execução. Não edite à mão.
 
 ## 1. Resumo
