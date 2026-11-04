@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { createProduct, restoreBugs, totals, valueOf } from './apoio'
+import { createProduct, restoreBugs, saveConditionsButton, totals, valueOf } from './apoio'
 
 test.beforeEach(async ({ request }) => {
   await restoreBugs(request)
@@ -37,7 +37,7 @@ test.describe('RF-13 a RF-35 · fluxo feliz do pedido', () => {
     await page.getByLabel('Desconto global (%)').fill('10')
     await page.getByLabel('Pix').check()
     await page.getByLabel('Parcelas').selectOption('3')
-    await page.getByRole('button', { name: 'Salvar', exact: true }).click()
+    await saveConditionsButton(page).click()
     await expect(page.getByText('Condições salvas. Os totais foram recalculados.')).toBeVisible()
     await expect(valueOf(totals(page), 'Desconto (10 %)')).toHaveText(/R\$ 45,00/)
     await expect(valueOf(totals(page), 'Frete')).toHaveText('Grátis')
@@ -51,7 +51,7 @@ test.describe('RF-13 a RF-35 · fluxo feliz do pedido', () => {
     // Finalizar congela itens e condições.
     await page.getByRole('button', { name: 'Finalizar pedido' }).click()
     await expect(page.getByText('itens e condições estão congelados')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Salvar', exact: true })).toHaveCount(0)
+    await expect(saveConditionsButton(page)).toHaveCount(0)
 
     // Primeira nota, parcial: R$ 200,00.
     const billing = page.getByRole('region', { name: 'Faturamento' })

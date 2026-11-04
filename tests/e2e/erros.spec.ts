@@ -6,6 +6,7 @@ import {
   getOrder,
   issueInvoice,
   restoreBugs,
+  saveConditionsButton,
   valueOf,
 } from './apoio'
 
@@ -104,7 +105,7 @@ test.describe('fluxos de erro', () => {
 
     // A primeira aba ainda mostra o rascunho e tenta salvar um desconto.
     await page.getByLabel('Desconto global (%)').fill('50')
-    await page.getByRole('button', { name: 'Salvar', exact: true }).click()
+    await saveConditionsButton(page).click()
     await expect(page.getByRole('main').getByRole('alert')).toHaveText(
       'O pedido está faturado e não aceita alterações. Só pedidos em rascunho podem ser alterados.',
     )

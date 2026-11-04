@@ -117,3 +117,11 @@ export async function focusIsVisible(page: Page): Promise<boolean> {
     return style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0
   })
 }
+
+/**
+ * Botão que grava as condições do pedido. Localizado pelo prefixo "Salvar" para que os testes
+ * de outras regras não dependam do rótulo exato; quem confere o rótulo é o teste da RF-40.
+ */
+export function saveConditionsButton(page: Page): Locator {
+  return page.getByRole('region', { name: 'Condições' }).getByRole('button', { name: /^Salvar/ })
+}
