@@ -520,11 +520,13 @@ do painel satisfazem a igualdade.
 ### RF-39 · Painel sempre atualizado
 
 O painel pode guardar os valores calculados em cache, mas cada ação que muda os números invalida
-esse cache: finalizar pedido, cancelar pedido, emitir nota e cancelar nota. A próxima leitura do
-painel já mostra os valores novos.
+esse cache: finalizar pedido, cancelar pedido, emitir nota e cancelar nota. Gravações feitas por
+outro processo no mesmo banco, como o seed rodado com o servidor aberto, também descartam o cache.
+A próxima leitura do painel já mostra os valores novos.
 
 **Aceite:** abrir o painel, emitir uma nota de R$ 100,00 e abrir o painel de novo: o faturado
-aumentou R$ 100,00 e o a faturar diminuiu R$ 100,00.
+aumentou R$ 100,00 e o a faturar diminuiu R$ 100,00. Uma nota gravada por outra conexão com o
+mesmo banco aparece na leitura seguinte do painel.
 
 ## 8. Interface
 
