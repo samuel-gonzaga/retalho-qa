@@ -11,3 +11,4 @@ para `origin/main`. Ver a decisão D-07 em `DECISOES.md`.
 | 3    | Design e telas  | 2026-11-03 | `b45c533`    | OK: `e0f3da0..b45c533 main -> main`                                 |
 | 4    | Artefatos de QA | 2026-11-04 | `11bf4c9`    | OK: `52c3443..11bf4c9 main -> main`                                 |
 | 5    | Automação e CI  | 2026-11-04 | `7b0021c`    | OK: `9c657a3..7b0021c main -> main`; CI 41858352273 verde (12 jobs) |
+| 6    | Entrega         | 2026-11-04 | `4bb5fee`    | OK: `83b1ad5..4bb5fee main -> main`; CI 41861175562 verde (12 jobs) |
