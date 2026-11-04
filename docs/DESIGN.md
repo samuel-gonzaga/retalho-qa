@@ -215,5 +215,11 @@ Feita sobre 20 capturas (10 telas, em 1280 px e 360 px) do build de produção, 
   busca num catálogo grande.
 - Os formulários não validam no navegador: todo erro vem da API, de propósito, para que a validação
   do servidor seja exercitada pela tela. O custo é uma ida ao servidor a cada erro.
-- O fluxo completo só com teclado (RNF-05) foi percorrido nos componentes, mas ainda não tem teste
-  automatizado; ele entra nos testes E2E da Fase 5.
+- O fluxo completo só com teclado (RNF-05) passou a ter teste automatizado na Fase 5
+  (`tests/e2e/acessibilidade.spec.ts`): cada controle é alcançado com Tab, com foco visível.
+- O `<dialog>` nativo não prende o foco no sentido estrito: o Tab pode sair para os controles do
+  navegador. A página por trás fica inerte, que é o comportamento acessível esperado; o teste
+  verifica essa propriedade.
+- A tela de erro de carregamento (`error.tsx`, "Tentar de novo") não tem teste automatizado: não
+  há como fazer uma página do servidor falhar sem alterar o código. A falha de rede numa ação é
+  testada.

@@ -44,7 +44,7 @@ automatizado e por exploração da interface.
 | ------------ | ----------------------- | ------------ | ------------------------------------------------------------------ |
 | Unitário     | Vitest                  | `tests/unit` | Funções puras do domínio: cálculos, validações, máquina de estados |
 | API          | Vitest + rotas do Next  | `tests/api`  | Status HTTP, corpo, regras de estado, persistência                 |
-| E2E          | Playwright              | `tests/e2e`  | Fluxos pela interface, em desktop e celular (Fase 5)               |
+| E2E          | Playwright              | `tests/e2e`  | Fluxos pela interface, em desktop e celular (360 px)               |
 | Exploratório | Charters com tempo fixo | `qa/05`      | O que os roteiros não preveem: combinações, abas, cache, textos    |
 
 ### 3.2 Técnicas de projeto
