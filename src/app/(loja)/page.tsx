@@ -5,11 +5,26 @@ import { getDashboard } from '@/server/dashboard'
 
 export const metadata: Metadata = { title: 'Painel' }
 
-function Figure({ label, cents, note }: { label: string; cents: number; note: string }) {
+function Figure({
+  id,
+  label,
+  cents,
+  note,
+}: {
+  id: string
+  label: string
+  cents: number
+  note: string
+}) {
   return (
     <div className="py-5 sm:px-6 sm:first:pl-0 sm:last:pr-0">
-      <dt className="font-medium">{label}</dt>
-      <dd className="numero mt-1 text-[40px] leading-[44px] font-bold [font-stretch:75%]">
+      <dt id={id} className="font-medium">
+        {label}
+      </dt>
+      <dd
+        aria-labelledby={id}
+        className="numero mt-1 text-[40px] leading-[44px] font-bold [font-stretch:75%]"
+      >
         {formatBRL(cents)}
       </dd>
       <dd className="mt-1 text-sm text-tinta-suave">{note}</dd>
@@ -79,16 +94,19 @@ export default function DashboardPage() {
       />
       <dl className="grid divide-fio border-b border-fio max-sm:divide-y sm:grid-cols-3 sm:divide-x">
         <Figure
+          id="painel-vendido"
           label="Vendido"
           cents={dashboard.soldCents}
           note="Pedidos finalizados, parcialmente faturados e faturados."
         />
         <Figure
+          id="painel-faturado"
           label="Faturado"
           cents={dashboard.invoicedCents}
           note="Notas emitidas e não canceladas."
         />
         <Figure
+          id="painel-a-faturar"
           label="A faturar"
           cents={dashboard.toInvoiceCents}
           note="Saldo dos pedidos finalizados e parcialmente faturados."

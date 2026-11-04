@@ -27,12 +27,17 @@ export default async function InvoicingPage({
         title="Faturamento"
         description="Notas internas fictícias, totais ou parciais. Cancelar uma nota devolve o valor ao saldo do pedido."
         actions={
-          <div className="sm:text-right">
-            <div className="text-sm text-tinta-suave">Total faturado</div>
-            <div className="numero text-[28px] leading-tight font-bold [font-stretch:75%]">
+          <dl className="sm:text-right">
+            <dt id="total-faturado" className="text-sm text-tinta-suave">
+              Total faturado
+            </dt>
+            <dd
+              aria-labelledby="total-faturado"
+              className="numero text-[28px] leading-tight font-bold [font-stretch:75%]"
+            >
               {formatBRL(totalInvoicedCents)}
-            </div>
-          </div>
+            </dd>
+          </dl>
         }
       />
       <IssuedNotice invoiceId={emitida} />
@@ -67,10 +72,18 @@ export default async function InvoicingPage({
                     </span>
                   </div>
                   <dl className="numero grid grid-cols-[auto_auto] gap-x-4 text-right text-sm">
-                    <dt className="text-tinta-suave">Total</dt>
-                    <dd>{formatBRL(order.totalCents)}</dd>
-                    <dt className="text-tinta-suave">Saldo</dt>
-                    <dd className="font-semibold">{formatBRL(order.balanceCents)}</dd>
+                    <dt id={`pedido-${order.id}-total`} className="text-tinta-suave">
+                      Total
+                    </dt>
+                    <dd aria-labelledby={`pedido-${order.id}-total`}>
+                      {formatBRL(order.totalCents)}
+                    </dd>
+                    <dt id={`pedido-${order.id}-saldo`} className="text-tinta-suave">
+                      Saldo
+                    </dt>
+                    <dd aria-labelledby={`pedido-${order.id}-saldo`} className="font-semibold">
+                      {formatBRL(order.balanceCents)}
+                    </dd>
                   </dl>
                 </div>
                 <IssueInvoiceForm

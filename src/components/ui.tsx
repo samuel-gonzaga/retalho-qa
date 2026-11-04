@@ -143,10 +143,15 @@ export function Notice({
   )
 }
 
-/** Lista de termos e valores, com números alinhados à direita. */
+/**
+ * Lista de termos e valores, com números alinhados à direita. Cada valor (dd) leva o nome do
+ * seu termo (dt), para leitores de tela e para testes que localizam por papel e nome.
+ */
 export function Summary({
+  id,
   rows,
 }: {
+  id: string
   rows: { term: ReactNode; value: ReactNode; strong?: boolean }[]
 }) {
   return (
@@ -156,8 +161,12 @@ export function Summary({
           key={index}
           className={`flex items-baseline justify-between gap-4 py-2 ${row.strong ? 'text-lg font-semibold' : ''}`}
         >
-          <dt className={row.strong ? '' : 'text-tinta-suave'}>{row.term}</dt>
-          <dd className="numero text-right">{row.value}</dd>
+          <dt id={`${id}-${index}`} className={row.strong ? '' : 'text-tinta-suave'}>
+            {row.term}
+          </dt>
+          <dd aria-labelledby={`${id}-${index}`} className="numero text-right">
+            {row.value}
+          </dd>
         </div>
       ))}
     </dl>

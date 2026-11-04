@@ -42,7 +42,7 @@ function Totals({ order }: { order: Order }) {
   return (
     <div className="border border-fio bg-papel p-4">
       <h2 className="mb-2 font-semibold">Totais</h2>
-      <Summary rows={rows} />
+      <Summary id="totais" rows={rows} />
       <h3 className="mt-4 mb-1 text-sm font-medium text-tinta-suave">
         {order.installments === 1 ? 'Pagamento à vista' : `Em ${order.installments} parcelas`} ·{' '}
         {PAYMENT_LABELS[order.paymentMethod]}
@@ -179,6 +179,7 @@ export default async function OrderPage({
               />
             ) : (
               <Summary
+                id="condicoes-resumo"
                 rows={[
                   { term: 'Cliente', value: order.customer.name },
                   { term: 'Desconto global', value: formatPercent(order.discountPct) },
@@ -206,6 +207,7 @@ export default async function OrderPage({
               description="Notas internas fictícias. Cancelar uma nota devolve o valor ao saldo."
             >
               <Summary
+                id="faturamento-resumo"
                 rows={[
                   { term: 'Total do pedido', value: formatBRL(order.totalCents) },
                   { term: 'Faturado', value: formatBRL(order.invoicedCents) },
