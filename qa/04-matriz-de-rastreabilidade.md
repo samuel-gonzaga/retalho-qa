@@ -11,7 +11,7 @@ uma execução real das suítes automatizadas, com todos os defeitos desligados.
 | Requisitos com caso de teste                    | 51 (100 %)        |
 | Requisitos com teste automatizado que cita o ID | 45 (88 %)         |
 | Casos de teste                                  | 73                |
-| Testes automatizados lidos                      | 329 (0 com falha) |
+| Testes automatizados lidos                      | 330 (0 com falha) |
 
 ## 2. Requisito → caso → teste → defeito
 
@@ -55,7 +55,7 @@ uma execução real das suítes automatizadas, com todos os defeitos desligados.
 | RF-36     | Vendido                                          | CT-59                                                                | `api/dashboard.test.ts` (1)                                                                                    | —        |
 | RF-37     | Faturado                                         | CT-60                                                                | `api/dashboard.test.ts` (1)                                                                                    | BUG-06   |
 | RF-38     | A faturar                                        | CT-61                                                                | `api/dashboard.test.ts` (1)                                                                                    | —        |
-| RF-39     | Painel sempre atualizado                         | CT-60                                                                | `api/dashboard.test.ts` (1)                                                                                    | BUG-06   |
+| RF-39     | Painel sempre atualizado                         | CT-60                                                                | `api/dashboard.test.ts` (2)                                                                                    | BUG-06   |
 | RF-40     | Botões sem atalhos que conflitam com o navegador | CT-62                                                                | `unit/labels.test.ts` (9)                                                                                      | BUG-07   |
 | RNF-01    | Mecanismo de defeitos                            | CT-63                                                                | `unit/bugs.test.ts` (18), `api/qa-bugs.test.ts` (4)                                                            | —        |
 | RNF-02    | Defeitos silenciosos                             | CT-64                                                                | `scripts/evidence.ts` · charter C-01 ¹                                                                         | —        |
