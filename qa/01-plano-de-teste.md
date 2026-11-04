@@ -88,7 +88,8 @@ Isso prova a detecção e mantém a rastreabilidade teste → defeito.
 ### 5.1 Entrada
 
 - Build de produção e lint sem erros.
-- Massa de dados recriada pelo seed.
+- Massa de dados recriada pelo seed, inclusive depois de cada sessão com defeito ligado: desligar
+  um defeito não conserta os dados que ele já gravou (achado A-05 do charter C-02).
 - Todos os defeitos desligados para a execução de regressão.
 
 ### 5.2 Saída
