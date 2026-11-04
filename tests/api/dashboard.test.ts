@@ -1,4 +1,9 @@
-import { describe, expect, it } from 'vitest'
+import Database from 'better-sqlite3'
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { describe, expect, it, vi } from 'vitest'
+import { resetDatabase } from '@/db/client'
 import { api, cancelInvoice, issueInvoice, orderWithTotal, withFreshDatabase } from './helpers'
 
 withFreshDatabase()
@@ -53,5 +58,33 @@ describe('RF-38 · vendido = faturado + a faturar', () => {
     const { soldCents, invoicedCents, toInvoiceCents } = await dashboard()
     expect(soldCents).toBe(42_345)
     expect(invoicedCents + toInvoiceCents).toBe(soldCents)
+  })
+})
+
+describe('RF-39 · painel e gravações feitas por outro processo', () => {
+  // Achado da sessão exploratória C-02: o seed rodado com o servidor aberto deixava o painel preso.
+  it('enxerga uma nota gravada por outra conexão com o mesmo banco', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'retalho-painel-'))
+    const file = join(dir, 'painel.db')
+    vi.stubEnv('RETALHO_DB_PATH', file)
+    resetDatabase()
+    try {
+      const order = await orderWithTotal(30_000)
+      expect((await dashboard()).invoicedCents).toBe(0)
+
+      const other = new Database(file)
+      other
+        .prepare(
+          "INSERT INTO invoices (order_id, amount_cents, status, issued_at) VALUES (?, 10000, 'issued', ?)",
+        )
+        .run(order.id, new Date().toISOString())
+      other.close()
+
+      expect((await dashboard()).invoicedCents).toBe(10_000)
+    } finally {
+      vi.unstubAllEnvs()
+      resetDatabase()
+      rmSync(dir, { recursive: true, force: true })
+    }
   })
 })
