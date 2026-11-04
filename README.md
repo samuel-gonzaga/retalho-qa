@@ -1,5 +1,7 @@
 # Projeto Retalho
 
+[![CI](https://github.com/samuel-gonzaga/retalho-qa/actions/workflows/ci.yml/badge.svg)](https://github.com/samuel-gonzaga/retalho-qa/actions/workflows/ci.yml)
+
 Loja de tecidos fictícia (tecido por metro, rolos e aviamentos) construída como peça de portfólio
 de QA: uma aplicação web funcional com **7 defeitos intencionais**, ligados um a um, e uma suíte
 de QA que os detecta.
@@ -41,18 +43,19 @@ Abra `http://localhost:3000`. O `next dev` bloqueia o acesso por `127.0.0.1`; us
 | Produtos    | `/produtos`    | Tecido por metro, rolos e aviamentos: busca e cadastro |
 | Clientes    | `/clientes`    | PF e PJ, com CPF, CNPJ (inclusive alfanumérico) e CEP  |
 
-| Comando                      | O que faz                                                        |
-| ---------------------------- | ---------------------------------------------------------------- |
-| `npm run dev`                | Sobe a aplicação em modo de desenvolvimento                      |
-| `npm run seed`               | Recria a massa fictícia (sempre a mesma) em `data/retalho.db`    |
-| `npm run lint`               | ESLint (zero avisos) e verificação do Prettier                   |
-| `npm test`                   | Testes unitários (Vitest)                                        |
-| `npm run test:api`           | Testes de API (Vitest, banco em memória)                         |
-| `npm run test:defeitos`      | Matriz de defeitos: roda as suítes com cada defeito ligado       |
-| `npm run test:e2e`           | Testes E2E (Playwright)                                          |
-| `npm run docs:check`         | Confere os IDs citados na documentação, no código e nos testes   |
-| `npm run qa:rastreabilidade` | Gera a matriz de rastreabilidade a partir de uma execução real   |
-| `npm run qa:relatorio`       | Gera o relatório de execução, com cobertura e matriz de defeitos |
+| Comando                      | O que faz                                                           |
+| ---------------------------- | ------------------------------------------------------------------- |
+| `npm run dev`                | Sobe a aplicação em modo de desenvolvimento                         |
+| `npm run seed`               | Recria a massa fictícia (sempre a mesma) em `data/retalho.db`       |
+| `npm run lint`               | ESLint (zero avisos) e verificação do Prettier                      |
+| `npm test`                   | Testes unitários (Vitest)                                           |
+| `npm run test:api`           | Testes de API (Vitest, banco em memória)                            |
+| `npm run test:defeitos`      | Matriz de defeitos: roda as suítes com cada defeito ligado          |
+| `npm run test:e2e`           | Testes E2E (Playwright), desktop e celular em 360 px                |
+| `npm run test:e2e:defeitos`  | Matriz de defeitos dos E2E: a suíte inteira com cada defeito ligado |
+| `npm run docs:check`         | Confere os IDs citados na documentação, no código e nos testes      |
+| `npm run qa:rastreabilidade` | Gera a matriz de rastreabilidade a partir de uma execução real      |
+| `npm run qa:relatorio`       | Gera o relatório de execução, com cobertura e matriz de defeitos    |
 
 ## Defeitos intencionais
 
