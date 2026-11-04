@@ -14,6 +14,7 @@ const VITEST_REPORT = join('test-results', 'vitest-execucao.json')
 const COVERAGE = join('test-results', 'cobertura', 'coverage-summary.json')
 const MATRIX = join('test-results', 'bug-matrix.json')
 const E2E_REPORT = join('test-results', 'e2e.json')
+const E2E_MATRIX = join('test-results', 'e2e-bug-matrix.json')
 const TRACEABILITY = 'qa/04-matriz-de-rastreabilidade.md'
 
 type Assertion = { fullName: string; status: string; duration?: number }
@@ -78,6 +79,27 @@ function e2eSummary(): { total: number; passed: number; failed: number } | null 
   )
   const passed = report.stats.expected + report.stats.flaky
   return { total: passed + report.stats.unexpected, passed, failed: report.stats.unexpected }
+}
+
+/** Seção da matriz de defeitos dos E2E, lida de `npm run test:e2e:defeitos`, se já tiver rodado. */
+function e2eMatrixSection(): string[] {
+  if (!existsSync(E2E_MATRIX)) {
+    return ['### 2.2 Matriz de defeitos dos E2E', '', 'Não executada nesta versão.', '']
+  }
+  const { rows } = read<{ rows: MatrixRow[] }>(E2E_MATRIX)
+  return [
+    '### 2.2 Matriz de defeitos dos E2E',
+    '',
+    'A suíte E2E inteira roda uma vez com cada defeito ligado (`npm run test:e2e:defeitos`).',
+    '',
+    '| Defeito | Testes etiquetados | Falharam (detecção) | Falhas sem etiqueta | Resultado |',
+    '| --- | --- | --- | --- | --- |',
+    ...rows.map(
+      (r) =>
+        `| BUG-0${r.bug} | ${r.tagged} | ${r.failedTagged.length} | ${r.unexpected.length} | ${r.ok ? 'detectado' : 'NÃO detectado'} |`,
+    ),
+    '',
+  ]
 }
 
 function traceabilityLine(label: string): string {
@@ -187,6 +209,7 @@ async function main() {
       ...r.unexpected.map((name) => `- FALHA SEM ETIQUETA: ${name}`),
       '',
     ]),
+    ...e2eMatrixSection(),
     '## 3. Cobertura de código',
     '',
     'Medida pelo provedor V8 do Vitest nas suítes unitária e de API. As telas (`src/app`, exceto',
