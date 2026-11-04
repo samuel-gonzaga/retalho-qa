@@ -13,12 +13,23 @@ export type Dashboard = {
 // Em globalThis para que rotas e páginas, mesmo em bundles diferentes, vejam o mesmo cache.
 const CACHE_KEY = '__retalhoDashboardCache'
 
-type Holder = typeof globalThis & { [CACHE_KEY]?: WeakMap<Db, Dashboard> }
+/** O resumo e a versão dos dados do SQLite no momento em que ele foi calculado. */
+type Cached = { summary: Dashboard; dataVersion: number }
 
-function cache(): WeakMap<Db, Dashboard> {
+type Holder = typeof globalThis & { [CACHE_KEY]?: WeakMap<Db, Cached> }
+
+function cache(): WeakMap<Db, Cached> {
   const holder = globalThis as Holder
   holder[CACHE_KEY] ??= new WeakMap()
   return holder[CACHE_KEY]
+}
+
+/**
+ * `data_version` muda quando outra conexão grava no banco (o seed com o servidor aberto, por
+ * exemplo). As gravações desta conexão não o mudam: essas invalidam o cache pelas ações (RF-39).
+ */
+function dataVersion(db: Db): number {
+  return db.pragma('data_version', { simple: true }) as number
 }
 
 function sum(db: Db, sql: string): number {
@@ -46,12 +57,13 @@ function compute(db: Db): Dashboard {
 
 export function getDashboard(): Dashboard {
   const db = getDb()
-  let summary = cache().get(db)
-  if (!summary) {
-    summary = compute(db)
-    cache().set(db, summary)
+  const version = dataVersion(db)
+  let cached = cache().get(db)
+  if (!cached || cached.dataVersion !== version) {
+    cached = { summary: compute(db), dataVersion: version }
+    cache().set(db, cached)
   }
-  return { ...summary }
+  return { ...cached.summary }
 }
 
 export function invalidateDashboard(): void {
