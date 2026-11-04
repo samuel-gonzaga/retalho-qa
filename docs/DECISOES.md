@@ -316,3 +316,34 @@ motivo. Os IDs são estáveis; uma decisão revista ganha uma nova entrada que c
 - **Alternativas:** medir também telas e componentes nessas suítes.
 - **Motivo:** telas e componentes são exercitados pelos testes E2E, que rodam no navegador. Somar
   esses arquivos a uma suíte que não os carrega daria um número baixo e enganoso.
+
+## Fase 5 · Automação e CI
+
+### D-36 · Localizadores dos E2E
+
+- **Decisão:** os E2E localizam por papel, rótulo e nome acessível. Os valores de resumos (`dl`)
+  são encontrados pelo termo (`term`) e pela definição que vem logo depois, porque a ARIA não dá
+  nome acessível a `term` e `definition`.
+- **Alternativas:** `aria-labelledby` nos valores (tentado e revertido: o navegador ignora o nome
+  nesses papéis); `data-testid`; seletores CSS.
+- **Motivo:** o teste lê a tela como o usuário e o leitor de tela leem. A relação termo → definição
+  é semântica, não depende de classe nem de layout.
+
+### D-37 · Matriz de defeitos também nos E2E
+
+- **Decisão:** `npm run test:e2e:defeitos` sobe o build de produção com cada defeito ligado e roda
+  a suíte E2E inteira, com a mesma regra da matriz das outras suítes: algum teste etiquetado falha
+  e nenhum teste sem etiqueta falha. No CI, cada defeito é um job paralelo.
+- **Alternativas:** rodar só os testes etiquetados com o defeito ligado.
+- **Motivo:** rodar a suíte inteira prova também que os outros testes não dependem do defeito. Isso
+  revelou que dois testes procuravam o botão pelo rótulo exato e falhariam com o BUG-07; eles
+  passaram a localizar o botão pela região, e o rótulo ficou a cargo do teste da RF-40.
+
+### D-38 · Desenho do CI
+
+- **Decisão:** um workflow com jobs independentes (qualidade, unitários, API, matriz de defeitos,
+  E2E e matriz de defeitos dos E2E), em Node 24, com as actions oficiais na versão 7. O relatório
+  HTML do Playwright é publicado como artefato. A única variável de ambiente é de teste
+  (`RETALHO_QA_PAINEL=1`).
+- **Alternativas:** um job único em sequência.
+- **Motivo:** jobs separados mostram no PR exatamente qual verificação falhou e rodam em paralelo.
