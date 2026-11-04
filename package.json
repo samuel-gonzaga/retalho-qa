@@ -20,7 +20,8 @@
     "test:defeitos": "tsx scripts/bug-matrix.ts",
     "seed": "tsx src/db/seed.ts",
     "docs:check": "tsx scripts/check-docs.ts",
-    "qa:rastreabilidade": "tsx scripts/traceability.ts"
+    "qa:rastreabilidade": "tsx scripts/traceability.ts",
+    "qa:relatorio": "tsx scripts/execution-report.ts"
   },
   "dependencies": {
     "better-sqlite3": "13.0.3",
@@ -35,6 +36,7 @@
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@vitest/coverage-v8": "5.1.0",
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.4",
     "prettier": "3.9.10",

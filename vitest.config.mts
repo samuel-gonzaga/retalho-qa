@@ -7,6 +7,14 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
+    // Ligada só com --coverage (npm run qa:relatorio).
+    coverage: {
+      provider: 'v8',
+      include: ['src/domain/**', 'src/server/**', 'src/db/**', 'src/app/api/**'],
+      exclude: ['src/db/seed.ts'],
+      reporter: ['text-summary', 'json-summary'],
+      reportsDirectory: 'test-results/cobertura',
+    },
     projects: [
       {
         extends: true,
