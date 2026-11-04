@@ -21,7 +21,8 @@
     "seed": "tsx src/db/seed.ts",
     "docs:check": "tsx scripts/check-docs.ts",
     "qa:rastreabilidade": "tsx scripts/traceability.ts",
-    "qa:relatorio": "tsx scripts/execution-report.ts"
+    "qa:relatorio": "tsx scripts/execution-report.ts",
+    "test:e2e:defeitos": "tsx scripts/e2e-bug-check.ts"
   },
   "dependencies": {
     "better-sqlite3": "13.0.3",

@@ -16,8 +16,9 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: [
     [process.env.CI ? 'github' : 'list'],
-    ['html', { open: 'never', outputFolder: 'playwright-report' }],
-    ['json', { outputFile: 'test-results/e2e.json' }],
+    // A verificação por defeito (scripts/e2e-bug-check.ts) grava em arquivos próprios.
+    ['html', { open: 'never', outputFolder: process.env.E2E_HTML ?? 'playwright-report' }],
+    ['json', { outputFile: process.env.E2E_JSON ?? 'test-results/e2e.json' }],
   ],
   use: {
     baseURL,
