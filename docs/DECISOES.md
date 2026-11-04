@@ -278,3 +278,41 @@ motivo. Os IDs são estáveis; uma decisão revista ganha uma nova entrada que c
 - **Alternativas:** versionar todas as capturas a cada execução.
 - **Motivo:** capturas regeneradas a cada mudança são arquivos gerados e incham o histórico. As
   que documentam algo são poucas e mudam pouco.
+
+## Fase 4 · Artefatos de QA
+
+### D-32 · Matriz e relatório gerados por script
+
+- **Decisão:** a matriz de rastreabilidade (`npm run qa:rastreabilidade`) e o relatório de
+  execução (`npm run qa:relatorio`) são gerados a partir da especificação, dos casos de teste e de
+  uma execução real das suítes. Os dois arquivos gerados são versionados.
+- **Alternativas:** escrever a matriz e o relatório à mão.
+- **Motivo:** documentos escritos à mão desatualizam em silêncio. Gerados, eles provam a ligação
+  requisito → caso → teste com o que de fato rodou, e o `docs:check` confere a cobertura de 100 %.
+  São artefatos de QA, não arquivos de build, por isso entram no repositório.
+
+### D-33 · Sessões exploratórias conduzidas pelo agente, com registro transparente
+
+- **Decisão:** as três sessões dos charters foram executadas pelo agente que construiu o projeto,
+  com Playwright e chamadas à API, e o documento diz isso explicitamente. Os horários e valores
+  registrados são os das sondas.
+- **Alternativas:** registrar as sessões como se tivessem sido feitas pelo autor.
+- **Motivo:** um registro de teste precisa ser verdadeiro. O charter continua repetível à mão
+  pelo autor, que pode substituir o registro pelo da própria sessão.
+
+### D-34 · Cache do painel atento a gravações de outro processo
+
+- **Decisão:** o cache do painel guarda o `PRAGMA data_version` do SQLite e é descartado quando
+  outra conexão grava no banco (achado A-04 da sessão C-02, commit `0c1d6c6`).
+- **Alternativas:** tirar o cache; orientar a reiniciar o servidor depois do seed.
+- **Motivo:** o achado era um defeito real fora do mecanismo `isBugOn`, e o projeto exige que,
+  com os defeitos desligados, o sistema esteja correto. O `data_version` não muda com as gravações
+  do próprio servidor, então o BUG-6 continua funcionando como especificado.
+
+### D-35 · Escopo da cobertura de código
+
+- **Decisão:** a cobertura do relatório mede `src/domain`, `src/server`, `src/db` e
+  `src/app/api` nas suítes unitária e de API, com o provedor V8.
+- **Alternativas:** medir também telas e componentes nessas suítes.
+- **Motivo:** telas e componentes são exercitados pelos testes E2E, que rodam no navegador. Somar
+  esses arquivos a uma suíte que não os carrega daria um número baixo e enganoso.
